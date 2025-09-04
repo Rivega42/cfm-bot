@@ -1,0 +1,328 @@
+{
+  "name": "CFM Example - Question Flow with Inline Keyboard",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message", "callback_query"]
+      },
+      "id": "telegram-trigger-1",
+      "name": "Telegram Trigger",
+      "type": "nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract message data\nconst telegram = items[0].json;\nlet output = {};\n\n// Check if it's a callback query (button press)\nif (telegram.callback_query) {\n  output = {\n    type: 'callback',\n    chatId: telegram.callback_query.message.chat.id,\n    userId: telegram.callback_query.from.id,\n    messageId: telegram.callback_query.message.message_id,\n    callbackId: telegram.callback_query.id,\n    callbackData: telegram.callback_query.data,\n    username: telegram.callback_query.from.username\n  };\n} else if (telegram.message) {\n  output = {\n    type: 'message',\n    chatId: telegram.message.chat.id,\n    userId: telegram.message.from.id,\n    text: telegram.message.text,\n    username: telegram.message.from.username\n  };\n} else {\n  output = {\n    type: 'unknown',\n    data: telegram\n  };\n}\n\nreturn [{json: output}];"
+      },
+      "id": "event-router-1",
+      "name": "Event Router",
+      "type": "nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "callback",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "callback-route"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "start-command"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "message-switch-1",
+      "name": "Message Router",
+      "type": "nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM questions WHERE batch_number = 1 ORDER BY order_index LIMIT 1;",
+        "options": {}
+      },
+      "id": "get-question-1",
+      "name": "Get First Question",
+      "type": "nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [850, 400],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "PostgreSQL CFM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare message with inline keyboard\nconst question = items[0].json;\nconst chatId = $node['Event Router'].json.chatId;\n\n// Parse options from JSON\nconst options = typeof question.options === 'string' \n  ? JSON.parse(question.options) \n  : question.options;\n\n// Create inline keyboard\nconst keyboard = {\n  inline_keyboard: [\n    // Answer buttons in one row\n    options.map(opt => ({\n      text: opt.text || opt.value.toString(),\n      callback_data: `answer_${question.id}_${opt.value}`\n    })),\n    // Skip button\n    [\n      {\n        text: '⏭ Пропустить вопрос',\n        callback_data: `skip_${question.id}`\n      }\n    ]\n  ]\n};\n\n// Prepare message\nconst message = {\n  chat_id: chatId,\n  text: `❓ **Вопрос ${question.order_index}/${question.batch_number}**\n\n${question.question_text}`,\n  parse_mode: 'Markdown',\n  reply_markup: keyboard\n};\n\nreturn [{json: message}];"
+      },
+      "id": "prepare-question-1",
+      "name": "Prepare Question Message",
+      "type": "nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{$env['TELEGRAM_BOT_TOKEN']}}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "send-message-1",
+      "name": "Send Question with Keyboard",
+      "type": "nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1250, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process callback from button press\nconst callback = items[0].json;\nconst parts = callback.callbackData.split('_');\n\nlet result = {\n  action: parts[0], // 'answer' or 'skip'\n  questionId: parts[1],\n  value: parts[2] || null,\n  userId: callback.userId,\n  chatId: callback.chatId,\n  messageId: callback.messageId,\n  callbackId: callback.callbackId\n};\n\n// Prepare to save answer if not skip\nif (result.action === 'answer') {\n  result.saveToDb = true;\n  result.answer = parseInt(result.value);\n}\n\nreturn [{json: result}];"
+      },
+      "id": "process-callback-1",
+      "name": "Process Callback",
+      "type": "nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{$env['TELEGRAM_BOT_TOKEN']}}/answerCallbackQuery",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify({\n  \"callback_query_id\": $json.callbackId,\n  \"text\": \"✅ Ответ сохранен\",\n  \"show_alert\": false\n})}}",
+        "options": {}
+      },
+      "id": "answer-callback-1",
+      "name": "Answer Callback Query",
+      "type": "nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.saveToDb}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "check-save-1",
+      "name": "Should Save?",
+      "type": "nodes-base.if",
+      "typeVersion": 1,
+      "position": [1250, 200]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO user_answers (user_id, question_id, my_answer, answered_at)\nVALUES (\n  (SELECT id FROM users WHERE telegram_id = {{$json.userId}}),\n  {{$json.questionId}},\n  {{$json.answer}},\n  NOW()\n)\nON CONFLICT (user_id, question_id) \nDO UPDATE SET \n  my_answer = {{$json.answer}},\n  answered_at = NOW();",
+        "options": {}
+      },
+      "id": "save-answer-1",
+      "name": "Save Answer to DB",
+      "type": "nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1450, 150],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "PostgreSQL CFM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load next question logic here\n// This would typically query for the next unanswered question\n\nreturn [{\n  json: {\n    message: 'Next question would load here',\n    userId: $json.userId\n  }\n}];"
+      },
+      "id": "next-question-1",
+      "name": "Load Next Question",
+      "type": "nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 200]
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Event Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Event Router": {
+      "main": [
+        [
+          {
+            "node": "Message Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Router": {
+      "main": [
+        [
+          {
+            "node": "Process Callback",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get First Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get First Question": {
+      "main": [
+        [
+          {
+            "node": "Prepare Question Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Question Message": {
+      "main": [
+        [
+          {
+            "node": "Send Question with Keyboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Callback": {
+      "main": [
+        [
+          {
+            "node": "Answer Callback Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Callback Query": {
+      "main": [
+        [
+          {
+            "node": "Should Save?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Save?": {
+      "main": [
+        [
+          {
+            "node": "Save Answer to DB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Load Next Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Answer to DB": {
+      "main": [
+        [
+          {
+            "node": "Load Next Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "executionTimeout": 300
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": "cfm-bot-example"
+  },
+  "pinData": {},
+  "versionId": "1.0.0",
+  "triggerCount": 1
+}
