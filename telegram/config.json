@@ -1,0 +1,126 @@
+{
+  "bot": {
+    "token": "6864357679:AAGneJy48H7CfeBpgOSYsWjwIGv4KUNf7x0",
+    "username": "@CFmatch_bot",
+    "name": "CFM Bot",
+    "description": "CoFounder Matching System"
+  },
+  "webhooks": {
+    "main": "https://n8n.1int.tech/webhook/45e44e1c-f611-45e9-94f7-b2247b25b8db",
+    "question_flow": "https://n8n.1int.tech/webhook/cfm-question-flow",
+    "matching": "https://n8n.1int.tech/webhook/cfm-matching"
+  },
+  "commands": [
+    {
+      "command": "start",
+      "description": "Начать работу с ботом"
+    },
+    {
+      "command": "profile",
+      "description": "Мой профиль и прогресс"
+    },
+    {
+      "command": "matches",
+      "description": "Посмотреть матчи"
+    },
+    {
+      "command": "help",
+      "description": "Помощь и поддержка"
+    },
+    {
+      "command": "settings",
+      "description": "Настройки аккаунта"
+    },
+    {
+      "command": "restart",
+      "description": "Начать заново"
+    }
+  ],
+  "messages": {
+    "welcome": "🎯 Добро пожаловать в CFM Bot!\n\nЯ помогу найти идеального кофаундера для вашего стартапа.\n\nДавайте начнем с нескольких вопросов, чтобы лучше понять ваш профиль.",
+    "help": "❓ Как работает CFM Bot:\n\n1️⃣ Ответьте на вопросы о себе\n2️⃣ Укажите предпочтения к кофаундеру\n3️⃣ Получите подходящие матчи\n4️⃣ Общайтесь с mutual матчами\n\nКоманды:\n/profile - Ваш профиль\n/matches - Просмотр матчей\n/help - Эта справка",
+    "profile_incomplete": "⚠️ Ваш профиль заполнен на {percentage}%\n\nОтветьте на оставшиеся вопросы для лучших матчей.",
+    "no_matches": "🔍 Пока нет подходящих матчей.\n\nПродолжайте отвечать на вопросы для улучшения результатов.",
+    "error": "❌ Произошла ошибка. Попробуйте позже или напишите /help"
+  },
+  "inline_keyboards": {
+    "question_answer": {
+      "type": "inline",
+      "rows": [
+        [
+          {"text": "1️⃣", "callback_data": "answer_1"},
+          {"text": "2️⃣", "callback_data": "answer_2"},
+          {"text": "3️⃣", "callback_data": "answer_3"},
+          {"text": "4️⃣", "callback_data": "answer_4"}
+        ],
+        [
+          {"text": "⏭ Пропустить", "callback_data": "skip_question"}
+        ]
+      ]
+    },
+    "importance": {
+      "type": "inline",
+      "rows": [
+        [
+          {"text": "🔴 Критично", "callback_data": "importance_4"}
+        ],
+        [
+          {"text": "🟠 Важно", "callback_data": "importance_3"}
+        ],
+        [
+          {"text": "🟡 Желательно", "callback_data": "importance_2"}
+        ],
+        [
+          {"text": "⚪ Не важно", "callback_data": "importance_1"}
+        ]
+      ]
+    },
+    "partner_answer": {
+      "type": "inline",
+      "rows": [
+        [
+          {"text": "1️⃣", "callback_data": "partner_1"},
+          {"text": "2️⃣", "callback_data": "partner_2"},
+          {"text": "3️⃣", "callback_data": "partner_3"},
+          {"text": "4️⃣", "callback_data": "partner_4"}
+        ],
+        [
+          {"text": "🤷 Любой ответ", "callback_data": "partner_any"}
+        ]
+      ]
+    },
+    "match_action": {
+      "type": "inline",
+      "rows": [
+        [
+          {"text": "❤️ Like", "callback_data": "match_like"},
+          {"text": "👎 Skip", "callback_data": "match_skip"}
+        ],
+        [
+          {"text": "💬 Написать", "callback_data": "match_message"}
+        ]
+      ]
+    },
+    "main_menu": {
+      "type": "inline",
+      "rows": [
+        [
+          {"text": "👤 Мой профиль", "callback_data": "menu_profile"},
+          {"text": "💘 Матчи", "callback_data": "menu_matches"}
+        ],
+        [
+          {"text": "❓ Вопросы", "callback_data": "menu_questions"},
+          {"text": "⚙️ Настройки", "callback_data": "menu_settings"}
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "max_message_length": 4096,
+    "session_timeout_minutes": 30,
+    "questions_per_batch": 7,
+    "min_answers_for_matching": 7,
+    "max_matches_per_day": 10,
+    "rate_limit_per_minute": 30
+  }
+}
