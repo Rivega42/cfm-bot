@@ -1,207 +1,167 @@
-# 📋 TODO List - CFM Bot
+# 📝 CFM Bot TODO List v3.0
 
-## ✅ Completed Critical Tasks
+**Last Updated**: 2025-09-04  
+**Sprint**: MVP Development  
+**Overall Progress**: 56%
 
-### TASK-1.1: Node Type Migration ✅
-**Status**: COMPLETE
-**Completed**: 2025-09-04
-- All node types successfully migrated
-- Workflow is now active
+## 🔴 Critical Priority (Blockers)
 
-### TASK-1.2: Database Questions Load ✅
-**Status**: COMPLETE
-- 40 questions loaded into database
+- [ ] **CFM-001**: Fix n8n node type prefixes ([Issue #6](https://github.com/rivega42/cfm-bot/issues/6))
+  - Update all `n8n-nodes-base.` to `nodes-base.`
+  - Keep Switch node as-is (do not change type)
+  - Test import in n8n v1.108.2
+  - **ETA**: 2 hours
+  - **Status**: 🔄 In Progress
 
-### TASK-1.3: Implement Inline Keyboards ✅
-**Status**: COMPLETE
-**Completed**: 2025-09-04
-- Inline keyboards implemented
-- Callback queries working
-- Navigation buttons added
+- [ ] **CFM-002**: Implement inline keyboard support
+  - Use HTTP Request instead of Telegram node
+  - Create keyboard builder helper
+  - Handle callback_query events
+  - **ETA**: 4 hours
+  - **Status**: ⏳ Queued
 
-### TASK-2.1: Complete User Registration ✅
-**Status**: COMPLETE
-**Completed**: 2025-09-04
-- CFM.2 Registration Flow created
-- 8-step registration process
-- Input validation implemented
-- Error handling added
-- Profile completion logic
-- Integration ready
+## 🟡 Medium Priority (Core Features)
 
----
+### User Management
+- [ ] **CFM-003**: Complete registration flow
+  - Multi-type user support (individual/team/project)
+  - Profile creation wizard
+  - Skill selection interface
+  - **ETA**: 6 hours
 
-## 🟡 High Priority Tasks (In Progress)
+- [ ] **CFM-004**: Session management
+  - Implement TTL on bot_sessions
+  - Handle timeouts gracefully
+  - State recovery mechanism
+  - **ETA**: 3 hours
 
-### TASK-2.2: Question Flow Logic ⬜
-**Priority**: 🟡 HIGH
-**Progress**: 60%
-**Component**: CFM.3 Workflow
+### Question System
+- [ ] **CFM-005**: Implement 3-stage question flow
+  - Stage 1: Basic info (Q1-10)
+  - Stage 2: Professional (Q11-25)
+  - Stage 3: Matching preferences (Q26-40)
+  - Progress tracking
+  - **ETA**: 8 hours
 
-- [x] Question retrieval from DB
-- [x] Basic flow structure
-- [ ] Answer storage
-- [ ] Progress tracking
-- [ ] Batch management
+- [ ] **CFM-006**: Answer validation
+  - Input type checking
+  - Range validation
+  - Required field enforcement
+  - **ETA**: 2 hours
 
-### TASK-2.3: Session Management ⬜
-**Priority**: 🟡 HIGH
-**Component**: Database/Bot State
+### Matching Engine
+- [ ] **CFM-007**: Design matching algorithm
+  - Define scoring weights
+  - Implement compatibility matrix
+  - Create ranking system
+  - **ETA**: 12 hours
 
-- [ ] Implement session timeout
-- [ ] Handle reconnections
-- [ ] State persistence
-- [ ] Cleanup old sessions
+- [ ] **CFM-008**: Build match generation workflow
+  - Query eligible users
+  - Calculate scores
+  - Apply subscription limits
+  - **ETA**: 6 hours
 
----
+## 🟢 Low Priority (Future Features)
 
-## 🟢 Medium Priority Tasks (Next Sprint)
+### Payment System
+- [ ] **CFM-009**: Robokassa integration
+  - Setup test credentials
+  - Create payment workflow
+  - Handle webhooks
+  - **ETA**: 8 hours
 
-### TASK-3.1: Basic Matching Algorithm ⬜
-**Priority**: 🟢 MEDIUM
-**Component**: CFM.4 Workflow
+### Analytics
+- [ ] **CFM-010**: Create analytics dashboard
+  - User acquisition funnel
+  - Match success rates
+  - Revenue metrics
+  - **ETA**: 10 hours
 
-- [ ] Design matching formula
-- [ ] Create calculation workflow
-- [ ] Store match scores
-- [ ] Rank matches
+### Interview System
+- [ ] **CFM-011**: HR interview automation
+  - Question bank creation
+  - AI evaluation integration
+  - Result reporting
+  - **ETA**: 16 hours
 
-### TASK-3.2: Match Viewer UI ⬜
-**Priority**: 🟢 MEDIUM
-**Component**: CFM.5 Workflow
+## 📁 Documentation Tasks
 
-- [ ] Design match card format
-- [ ] Implement pagination
-- [ ] Add like/skip buttons
-- [ ] Show match percentage
+- [x] Complete ARCHITECTURE.md
+- [ ] Update API.md with all endpoints
+- [ ] Create DEPLOYMENT.md guide
+- [ ] Write TESTING.md procedures
+- [ ] Add inline code comments
 
-### TASK-3.3: Contact Exchange ⬜
-**Priority**: 🟢 MEDIUM
-**Component**: CFM.6 Workflow
+## 🧪 Testing Requirements
 
-- [ ] Mutual match detection
-- [ ] Contact reveal logic
-- [ ] Notification system
-- [ ] Privacy controls
+- [ ] Unit tests for core functions
+- [ ] Integration tests for workflows
+- [ ] End-to-end bot testing
+- [ ] Load testing (1000 users)
+- [ ] Security testing
 
----
+## 🚀 DevOps Tasks
 
-## 🔵 Low Priority Tasks (Backlog)
+- [ ] Setup CI/CD pipeline
+- [ ] Configure monitoring (Grafana)
+- [ ] Implement backup strategy
+- [ ] Create Docker containers
+- [ ] Setup staging environment
 
-### TASK-4.1: Analytics Dashboard ⬜
-**Priority**: 🔵 LOW
-**Component**: Analytics
+## 💡 Ideas & Improvements
 
-- [ ] User activity tracking
-- [ ] Match success rates
-- [ ] Question effectiveness
-- [ ] Conversion funnel
+- [ ] Voice message support
+- [ ] Multi-language support (EN/RU)
+- [ ] Web dashboard for users
+- [ ] Mobile app development
+- [ ] AI chat assistant
+- [ ] Video introductions
+- [ ] Skill verification system
+- [ ] Referral program
 
-### TASK-4.2: Admin Panel ⬜
-**Priority**: 🔵 LOW
-**Component**: Admin Tools
+## ✅ Completed Tasks
 
-- [ ] User management
-- [ ] Question editor
-- [ ] System monitoring
-- [ ] Manual matching
+- [x] Database schema v3.0
+- [x] Project documentation structure
+- [x] GitHub repository setup
+- [x] Telegram bot creation
+- [x] n8n instance configuration
+- [x] Load 40 questions to DB
+- [x] Complete ARCHITECTURE.md
 
-### TASK-4.3: Documentation ⬜
-**Priority**: 🔵 LOW
-**Component**: Docs
+## 📊 Sprint Planning
 
-- [x] API documentation
-- [x] Deployment guide
-- [ ] User manual
-- [ ] Developer guide
+### Week 1 (Current)
+- Fix critical n8n issues
+- Complete registration flow
+- Start question system
 
-### TASK-4.4: Testing Suite ⬜
-**Priority**: 🔵 LOW
-**Component**: Tests
+### Week 2
+- Finish question system
+- Design matching algorithm
+- Begin match generation
 
-- [ ] Unit tests
-- [ ] Integration tests
-- [ ] E2E tests
-- [ ] Load testing
+### Week 3
+- Complete matching engine
+- Start payment integration
+- Begin testing phase
 
----
+### Week 4
+- Finish payment system
+- Complete all testing
+- Deploy MVP version
 
-## 📊 Task Summary
+## 🔗 Resources
 
-| Priority | Total | Complete | In Progress | Not Started |
-|----------|-------|----------|-------------|-------------|
-| ✅ Critical | 4 | 4 | 0 | 0 |
-| 🟡 High | 2 | 0 | 1 | 1 |
-| 🟢 Medium | 3 | 0 | 0 | 3 |
-| 🔵 Low | 4 | 0 | 0 | 4 |
-| **TOTAL** | **13** | **4** | **1** | **8** |
-
----
-
-## 🎯 Current Sprint (Updated)
-
-### Sprint 1 - ✅ COMPLETE
-**Duration**: 1 day
-**Status**: Done
-**Completed**:
-- ✅ TASK-1.1 - Node migration
-- ✅ TASK-1.3 - Inline keyboards
-- ✅ Database setup
-
-### Sprint 2 - IN PROGRESS
-**Duration**: 2 days
-**Goal**: Complete core flows
-**Tasks**:
-1. ✅ TASK-2.1 - Registration flow (DONE)
-2. TASK-2.2 - Question logic (60% → 100%)
-3. TASK-2.3 - Session management (0% → 100%)
-
-### Sprint 3 - PLANNED
-**Duration**: 3 days
-**Goal**: Matching system
-**Tasks**:
-1. TASK-3.1 - Matching algorithm
-2. TASK-3.2 - Match viewer
-3. TASK-3.3 - Contact exchange
+- [Project Board](https://github.com/rivega42/cfm-bot/projects)
+- [Issues](https://github.com/rivega42/cfm-bot/issues)
+- [n8n Docs](https://docs.n8n.io)
+- [Telegram Bot API](https://core.telegram.org/bots/api)
+- [Robokassa Docs](https://docs.robokassa.ru)
 
 ---
 
-## 🚀 Next Immediate Actions
-
-1. **Today (Priority)**:
-   - [x] Complete user registration flow ✅
-   - [ ] Deploy CFM.2 to n8n instance
-   - [ ] Integrate with main bot
-   - [ ] Test full registration flow
-
-2. **Tomorrow**:
-   - [ ] Start question flow implementation
-   - [ ] Finish question answer storage
-   - [ ] Add progress tracking
-
-3. **This Week**:
-   - [ ] Complete session management
-   - [ ] Start matching algorithm
-   - [ ] Create test scenarios
-
----
-
-## 📈 Progress Metrics
-
-### Overall Project Completion: **60%** ⬆️
-
-| Component | Status | Progress |
-|-----------|--------|-------------|
-| Infrastructure | ✅ | 100% |
-| Database | ✅ | 100% |
-| Core Bot | ✅ | 100% |
-| Registration | ✅ | 100% |
-| Questions | ⚠️ | 60% |
-| Matching | ❌ | 0% |
-| Testing | ❌ | 10% |
-
----
-
-**Last Updated**: 2025-09-04 13:20 UTC
-**Next Review**: 2025-09-05 09:00 UTC
-**Sprint End**: 2025-09-06 18:00 UTC
+**Note**: Tasks are prioritized using MoSCoW method (Must/Should/Could/Won't).  
+**Update Frequency**: Daily during active development.  
+**Review Cycle**: Weekly sprint planning sessions.
