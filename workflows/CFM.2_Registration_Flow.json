@@ -1,0 +1,179 @@
+{
+  "name": "CFM.2 Registration Flow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "cfm-registration",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-registration",
+      "name": "Registration Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [250, 300],
+      "typeVersion": 1.1,
+      "webhookId": "cfm-registration-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse incoming registration request\nconst input = $input.all()[0].json;\n\nlet registrationData = {\n  userId: input.userId || input.body?.userId,\n  chatId: input.chatId || input.body?.chatId,\n  telegram_id: input.telegram_id || input.body?.telegram_id,\n  step: input.step || input.body?.step || 'welcome',\n  userInput: input.userInput || input.body?.userInput || null,\n  sessionData: input.sessionData || input.body?.sessionData || {},\n  messageId: input.messageId || input.body?.messageId || null,\n  isCallback: input.isCallback || input.body?.isCallback || false,\n  callbackId: input.callbackId || input.body?.callbackId || null\n};\n\nconsole.log('Registration request:', registrationData);\nreturn [{json: registrationData}];"
+      },
+      "id": "parse-request",
+      "name": "Parse Request",
+      "type": "n8n-nodes-base.code",
+      "position": [450, 300],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Get user profile data\nSELECT \n    u.id as user_id,\n    u.telegram_id,\n    u.username,\n    u.first_name,\n    u.last_name,\n    u.email,\n    u.phone,\n    u.profile_completed,\n    u.onboarding_step,\n    u.state,\n    p.bio,\n    p.location,\n    p.skills,\n    p.interests,\n    p.experience_years,\n    p.looking_for,\n    p.availability,\n    p.linkedin_url,\n    p.website_url,\n    s.session_data,\n    s.current_step\nFROM users u\nLEFT JOIN user_profiles p ON u.id = p.user_id\nLEFT JOIN user_sessions s ON u.id = s.user_id AND s.is_active = true\nWHERE u.telegram_id = '{{$json[\"telegram_id\"]}}'",
+        "options": {}
+      },
+      "id": "get-user-profile",
+      "name": "Get User Profile",
+      "type": "n8n-nodes-base.postgres",
+      "position": [650, 300],
+      "typeVersion": 2.4,
+      "credentials": {
+        "postgres": {
+          "id": "hnd3TKy4nWjWuRGC",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Registration steps handler with validation\nconst request = $node[\"Parse Request\"].json;\nconst userData = $input.all()[0].json;\n\nlet response = {\n  chatId: request.chatId,\n  messageId: request.messageId,\n  step: request.step,\n  telegram_id: request.telegram_id\n};\n\n// Registration steps configuration\nconst STEPS = {\n  welcome: {\n    message: \"👋 Добро пожаловать в процесс регистрации!\\n\\n📝 Сейчас мы заполним ваш профиль кофаундера.\\n\\nЭто займет 3-5 минут и поможет найти идеального партнера для вашего стартапа.\\n\\n📊 Нужно будет указать:\\n• Основную информацию\\n• Профессиональные навыки\\n• Ваши предпочтения\\n\\nГотовы начать?\",\n    keyboard: {\n      inline_keyboard: [\n        [{text: \"🚀 Начать регистрацию\", callback_data: \"reg_start\"}],\n        [{text: \"📖 Подробнее\", callback_data: \"reg_info\"}],\n        [{text: \"🔙 Вернуться\", callback_data: \"back_to_menu\"}]\n      ]\n    },\n    nextStep: \"first_name\",\n    skipValidation: true\n  },\n  \n  first_name: {\n    message: \"📝 Шаг 1/8: Ваше имя\\n\\nВведите ваше имя (на русском или английском):\",\n    validation: {\n      required: true,\n      minLength: 2,\n      maxLength: 50,\n      pattern: /^[а-яА-ЯёЁa-zA-Z\\s-]+$/\n    },\n    errorMessage: \"❌ Имя должно содержать только буквы и быть от 2 до 50 символов\",\n    nextStep: \"last_name\",\n    field: \"first_name\"\n  },\n  \n  last_name: {\n    message: \"📝 Шаг 2/8: Ваша фамилия\\n\\nВведите вашу фамилию:\",\n    validation: {\n      required: true,\n      minLength: 2,\n      maxLength: 50,\n      pattern: /^[а-яА-ЯёЁa-zA-Z\\s-]+$/\n    },\n    errorMessage: \"❌ Фамилия должна содержать только буквы и быть от 2 до 50 символов\",\n    nextStep: \"email\",\n    field: \"last_name\"\n  },\n  \n  email: {\n    message: \"📧 Шаг 3/8: Email\\n\\nВведите ваш email для связи:\\n\\n💡 На него придет подтверждение матчей\",\n    validation: {\n      required: true,\n      pattern: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/\n    },\n    errorMessage: \"❌ Введите корректный email адрес\",\n    nextStep: \"phone\",\n    field: \"email\"\n  },\n  \n  phone: {\n    message: \"📱 Шаг 4/8: Телефон (опционально)\\n\\nВведите номер телефона или нажмите 'Пропустить':\",\n    keyboard: {\n      inline_keyboard: [\n        [{text: \"⏭ Пропустить\", callback_data: \"skip_phone\"}]\n      ]\n    },\n    validation: {\n      required: false,\n      pattern: /^[\\d+\\s()\\-]+$/\n    },\n    errorMessage: \"❌ Некорректный формат телефона\",\n    nextStep: \"location\",\n    field: \"phone\"\n  },\n  \n  location: {\n    message: \"📍 Шаг 5/8: Локация\\n\\nУкажите ваш город или страну:\\n\\n💡 Это поможет найти кофаундеров рядом\",\n    validation: {\n      required: true,\n      minLength: 2\n    },\n    errorMessage: \"❌ Укажите локацию (минимум 2 символа)\",\n    nextStep: \"experience\",\n    field: \"location\"\n  },\n  \n  experience: {\n    message: \"💼 Шаг 6/8: Опыт\\n\\nСколько лет опыта в бизнесе/стартапах?\",\n    keyboard: {\n      inline_keyboard: [\n        [{text: \"0-1 год\", callback_data: \"exp_0-1\"}],\n        [{text: \"2-3 года\", callback_data: \"exp_2-3\"}],\n        [{text: \"4-5 лет\", callback_data: \"exp_4-5\"}],\n        [{text: \"6-10 лет\", callback_data: \"exp_6-10\"}],\n        [{text: \"10+ лет\", callback_data: \"exp_10+\"}]\n      ]\n    },\n    nextStep: \"bio\",\n    field: \"experience_years\",\n    mapCallback: {\n      \"exp_0-1\": \"0-1\",\n      \"exp_2-3\": \"2-3\",\n      \"exp_4-5\": \"4-5\",\n      \"exp_6-10\": \"6-10\",\n      \"exp_10+\": \"10+\"\n    }\n  },\n  \n  bio: {\n    message: \"✍️ Шаг 7/8: О себе\\n\\nРасскажите кратко о себе и вашем опыте (до 500 символов):\\n\\n💡 Что вы умеете? Какие проекты делали?\",\n    validation: {\n      required: true,\n      minLength: 20,\n      maxLength: 500\n    },\n    errorMessage: \"❌ Описание должно быть от 20 до 500 символов\",\n    nextStep: \"looking_for\",\n    field: \"bio\"\n  },\n  \n  looking_for: {\n    message: \"🎯 Шаг 8/8: Кого ищете?\\n\\nКакого кофаундера вы ищете?\",\n    keyboard: {\n      inline_keyboard: [\n        [{text: \"💻 Технический (CTO)\", callback_data: \"lf_tech\"}],\n        [{text: \"💼 Бизнес (CEO/COO)\", callback_data: \"lf_business\"}],\n        [{text: \"📈 Маркетинг (CMO)\", callback_data: \"lf_marketing\"}],\n        [{text: \"💰 Финансы (CFO)\", callback_data: \"lf_finance\"}],\n        [{text: \"🎨 Дизайн/Продукт\", callback_data: \"lf_design\"}],\n        [{text: \"🤝 Любой подходящий\", callback_data: \"lf_any\"}]\n      ]\n    },\n    nextStep: \"complete\",\n    field: \"looking_for\",\n    mapCallback: {\n      \"lf_tech\": \"Technical (CTO)\",\n      \"lf_business\": \"Business (CEO/COO)\",\n      \"lf_marketing\": \"Marketing (CMO)\",\n      \"lf_finance\": \"Finance (CFO)\",\n      \"lf_design\": \"Design/Product\",\n      \"lf_any\": \"Any suitable\"\n    }\n  },\n  \n  complete: {\n    message: \"✅ Отлично! Ваш профиль заполнен!\\n\\n📊 Теперь можно перейти к вопросам для точного подбора кофаундера.\\n\\n💡 40 вопросов помогут найти идеального партнера с совместимостью 85%+\",\n    keyboard: {\n      inline_keyboard: [\n        [{text: \"🚀 Начать вопросы\", callback_data: \"start_questions\"}],\n        [{text: \"👤 Посмотреть профиль\", callback_data: \"view_profile\"}],\n        [{text: \"🏠 В главное меню\", callback_data: \"main_menu\"}]\n      ]\n    },\n    skipValidation: true\n  }\n};\n\n// Get current step config\nconst currentStep = STEPS[request.step] || STEPS.welcome;\n\n// Handle user input if provided\nif (request.userInput && !currentStep.skipValidation) {\n  // Check if it's a callback\n  if (request.isCallback && currentStep.mapCallback) {\n    const mappedValue = currentStep.mapCallback[request.userInput];\n    if (mappedValue) {\n      response.fieldToSave = currentStep.field;\n      response.valueToSave = mappedValue;\n      response.moveToNext = true;\n      response.nextStep = currentStep.nextStep;\n    }\n  } \n  // Check for skip action\n  else if (request.userInput === 'skip_phone' && request.step === 'phone') {\n    response.moveToNext = true;\n    response.nextStep = currentStep.nextStep;\n  }\n  // Validate text input\n  else if (currentStep.validation && !request.isCallback) {\n    const validation = currentStep.validation;\n    const input = request.userInput.trim();\n    \n    let isValid = true;\n    let errorMsg = currentStep.errorMessage;\n    \n    // Check required\n    if (validation.required && !input) {\n      isValid = false;\n      errorMsg = \"❌ Это поле обязательно для заполнения\";\n    }\n    \n    // Check length\n    if (isValid && validation.minLength && input.length < validation.minLength) {\n      isValid = false;\n    }\n    if (isValid && validation.maxLength && input.length > validation.maxLength) {\n      isValid = false;\n    }\n    \n    // Check pattern\n    if (isValid && validation.pattern && !validation.pattern.test(input)) {\n      isValid = false;\n    }\n    \n    if (isValid) {\n      response.fieldToSave = currentStep.field;\n      response.valueToSave = input;\n      response.moveToNext = true;\n      response.nextStep = currentStep.nextStep;\n    } else {\n      response.validationError = true;\n      response.errorMessage = errorMsg + \"\\n\\nПопробуйте еще раз:\";\n    }\n  }\n}\n\n// Prepare response message\nif (response.validationError) {\n  response.message = response.errorMessage;\n  response.keyboard = currentStep.keyboard;\n} else if (response.moveToNext && response.nextStep) {\n  const nextStepConfig = STEPS[response.nextStep];\n  response.message = nextStepConfig.message;\n  response.keyboard = nextStepConfig.keyboard;\n  response.currentStep = response.nextStep;\n} else {\n  response.message = currentStep.message;\n  response.keyboard = currentStep.keyboard;\n  response.currentStep = request.step;\n}\n\n// Add progress indicator\nif (response.currentStep && response.currentStep !== 'welcome' && response.currentStep !== 'complete') {\n  const stepNumber = Object.keys(STEPS).indexOf(response.currentStep);\n  const totalSteps = Object.keys(STEPS).length - 2; // Exclude welcome and complete\n  const progress = Math.round((stepNumber / totalSteps) * 100);\n  response.message = `📊 Прогресс: ${progress}%\\n\\n` + response.message;\n}\n\nconsole.log('Registration response:', response);\nreturn [{json: response}];"
+      },
+      "id": "registration-handler",
+      "name": "Registration Handler",
+      "type": "n8n-nodes-base.code",
+      "position": [850, 300],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json[\"fieldToSave\"] !== undefined}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "should-save",
+      "name": "Should Save?",
+      "type": "n8n-nodes-base.if",
+      "position": [1050, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Update user profile fields dynamically\n{{ $json.fieldToSave === 'first_name' || $json.fieldToSave === 'last_name' || $json.fieldToSave === 'email' || $json.fieldToSave === 'phone' ? \n`UPDATE users \nSET ${$json.fieldToSave} = '${$json.valueToSave}',\n    last_active = CURRENT_TIMESTAMP\nWHERE telegram_id = '${$json.telegram_id}';\n\nSELECT 'User info updated' as status;`\n:\n`-- Ensure profile exists\nINSERT INTO user_profiles (user_id, ${$json.fieldToSave}, updated_at)\nSELECT id, '${$json.valueToSave}', CURRENT_TIMESTAMP\nFROM users\nWHERE telegram_id = '${$json.telegram_id}'\nON CONFLICT (user_id) \nDO UPDATE SET \n    ${$json.fieldToSave} = '${$json.valueToSave}',\n    updated_at = CURRENT_TIMESTAMP;\n\nSELECT 'Profile updated' as status;`\n}}",
+        "options": {}
+      },
+      "id": "save-profile-field",
+      "name": "Save Profile Field",
+      "type": "n8n-nodes-base.postgres",
+      "position": [1250, 250],
+      "typeVersion": 2.4,
+      "credentials": {
+        "postgres": {
+          "id": "hnd3TKy4nWjWuRGC",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$node[\"Registration Handler\"].json.currentStep}}",
+              "operation": "equals",
+              "value2": "complete"
+            }
+          ]
+        }
+      },
+      "id": "is-complete",
+      "name": "Is Complete?",
+      "type": "n8n-nodes-base.if",
+      "position": [1450, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Mark profile as completed\nUPDATE users \nSET profile_completed = true,\n    state = 'registered',\n    onboarding_step = 0,\n    last_active = CURRENT_TIMESTAMP\nWHERE telegram_id = '{{$node[\"Registration Handler\"].json.telegram_id}}';\n\n-- Update session to questions flow\nUPDATE user_sessions \nSET current_step = 'questions_batch_1',\n    session_data = jsonb_set(\n        COALESCE(session_data, '{}'),\n        '{registration_completed}',\n        'true'\n    )\nWHERE user_id = (SELECT id FROM users WHERE telegram_id = '{{$node[\"Registration Handler\"].json.telegram_id}}')\n  AND is_active = true;\n\nSELECT 'Profile completed' as status;",
+        "options": {}
+      },
+      "id": "mark-complete",
+      "name": "Mark Complete",
+      "type": "n8n-nodes-base.postgres",
+      "position": [1650, 250],
+      "typeVersion": 2.4,
+      "credentials": {
+        "postgres": {
+          "id": "hnd3TKy4nWjWuRGC",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare response for main bot\nconst handler = $node[\"Registration Handler\"].json;\nconst isComplete = handler.currentStep === 'complete';\n\nlet response = {\n  success: true,\n  chatId: handler.chatId,\n  message: handler.message,\n  keyboard: handler.keyboard,\n  currentStep: handler.currentStep,\n  isComplete: isComplete,\n  editMessage: handler.messageId ? true : false,\n  messageId: handler.messageId\n};\n\nif (isComplete) {\n  response.action = 'registration_complete';\n  response.triggerNext = 'questions_flow';\n}\n\nreturn [{json: response}];"
+      },
+      "id": "prepare-response",
+      "name": "Prepare Response",
+      "type": "n8n-nodes-base.code",
+      "position": [1850, 300],
+      "typeVersion": 2
+    }
+  ],
+  "connections": {
+    "Registration Webhook": {
+      "main": [[{"node": "Parse Request", "type": "main", "index": 0}]]
+    },
+    "Parse Request": {
+      "main": [[{"node": "Get User Profile", "type": "main", "index": 0}]]
+    },
+    "Get User Profile": {
+      "main": [[{"node": "Registration Handler", "type": "main", "index": 0}]]
+    },
+    "Registration Handler": {
+      "main": [[{"node": "Should Save?", "type": "main", "index": 0}]]
+    },
+    "Should Save?": {
+      "main": [
+        [{"node": "Save Profile Field", "type": "main", "index": 0}],
+        [{"node": "Is Complete?", "type": "main", "index": 0}]
+      ]
+    },
+    "Save Profile Field": {
+      "main": [[{"node": "Is Complete?", "type": "main", "index": 0}]]
+    },
+    "Is Complete?": {
+      "main": [
+        [{"node": "Mark Complete", "type": "main", "index": 0}],
+        [{"node": "Prepare Response", "type": "main", "index": 0}]
+      ]
+    },
+    "Mark Complete": {
+      "main": [[{"node": "Prepare Response", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true
+  },
+  "meta": {
+    "instanceId": "cfm-registration-flow"
+  }
+}
