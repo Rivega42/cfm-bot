@@ -1,4 +1,4 @@
-# 🤖 CFM Bot - Customer Feedback Management System
+# 🤖 CFM Bot - Cofounder Matching System
 
 [![n8n Version](https://img.shields.io/badge/n8n-1.108.2-blue)](https://n8n.io)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791)](https://postgresql.org)
@@ -7,27 +7,29 @@
 
 ## 📋 Overview
 
-CFM Bot is a comprehensive customer feedback management system that automates the collection, processing, and analysis of customer feedback through Telegram integration and n8n workflows.
+CFM Bot is an intelligent cofounder matching system that helps entrepreneurs find their ideal business partners through a comprehensive questionnaire system via Telegram bot and automated matching algorithms.
 
 ### 🎯 Key Features
 
-- **Automated Feedback Collection**: Telegram bot for seamless user interaction
-- **Smart Question Flow**: 40+ predefined questions with dynamic routing
-- **Real-time Processing**: n8n workflows for immediate data handling
-- **Analytics Dashboard**: Comprehensive feedback analysis and reporting
-- **Multi-channel Support**: Extensible architecture for future integrations
+- **Smart Matching Algorithm**: 40+ questions to analyze compatibility between potential cofounders
+- **Personality & Skills Assessment**: Deep profiling of technical skills, business acumen, and personality traits
+- **Automated Telegram Bot**: Seamless user experience for data collection
+- **Real-time Processing**: n8n workflows for immediate matching and notifications
+- **Analytics Dashboard**: Comprehensive matching statistics and success metrics
+- **Multi-language Support**: Russian and English interfaces
 
 ## 🏗️ Architecture
 
 ```mermaid
 graph TB
-    A[Telegram Users] -->|Messages| B[Telegram Bot]
+    A[Entrepreneurs/Founders] -->|Telegram| B[CFM Bot]
     B --> C[n8n Webhooks]
     C --> D[Message Router]
     D --> E[Question Handler]
     E --> F[PostgreSQL DB]
-    F --> G[Analytics Engine]
-    G --> H[Reports]
+    F --> G[Matching Engine]
+    G --> H[Match Results]
+    H --> I[Notifications]
 ```
 
 ## 🚀 Quick Start
@@ -73,33 +75,64 @@ cfm-bot/
 ├── telegram/          # Telegram bot configuration
 ├── tests/            # Test scenarios
 ├── README.md
+├── README.ru.md      # Russian documentation
 ├── CHANGELOG.md
 └── TODO.md
 ```
 
+## 🎯 Use Cases
+
+- **Tech Startups**: Finding technical cofounders with complementary skills
+- **Business Partnerships**: Matching business-oriented founders with technical experts
+- **Industry-Specific Matching**: Connecting founders in specific industries
+- **Skill Gap Filling**: Finding partners who complement your weaknesses
+
 ## 📈 Development Progress
 
-**Overall Progress: 35%**
+**Overall Progress: 38%**
 
 - [x] Initial repository setup
 - [x] Database schema design
 - [x] Basic n8n workflow structure
 - [x] Telegram bot integration
-- [ ] Question flow implementation (40%)
+- [x] 40 matching questions loaded
+- [ ] Matching algorithm implementation (40%)
 - [ ] Analytics dashboard
-- [ ] Automated reporting
+- [ ] Automated matching notifications
+- [ ] Web interface
 
-## 📄 License
+## 🧩 Question Categories
 
-This project is licensed under the MIT License.
+The system evaluates potential cofounders across multiple dimensions:
+
+1. **Technical Skills**: Programming languages, frameworks, architecture
+2. **Business Skills**: Marketing, sales, finance, operations
+3. **Personality Traits**: Leadership style, work ethics, communication
+4. **Vision & Goals**: Startup ideas, long-term objectives, exit strategies
+5. **Practical Aspects**: Location, time commitment, investment capacity
+
+## 📊 Matching Algorithm
+
+The CFM matching algorithm considers:
+- Complementary skills (technical + business)
+- Compatible working styles
+- Aligned vision and goals
+- Practical compatibility (location, time, investment)
+- Industry preferences
 
 ## 👥 Team
 
 - **Project Lead**: @Rivega42
 - **n8n Development**: In progress
 - **Database Design**: Completed
+- **Algorithm Design**: In development
+
+## 📄 License
+
+This project is licensed under the MIT License.
 
 ---
 
 **Last Updated**: September 4, 2025
 **Version**: 0.3.5
+**Bot**: [@CFmatch_bot](https://t.me/CFmatch_bot)

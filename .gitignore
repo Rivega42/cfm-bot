@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# Database
+*.sqlite
+*.db
+database/backups/*.sql
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Build
+dist/
+build/
+
+# Testing
+coverage/
+
+# Temp
+tmp/
+temp/
+*.tmp
+
+# Backups
+*.backup
+*.bak
+
+# Security
+*.key
+*.pem
+credentials/
