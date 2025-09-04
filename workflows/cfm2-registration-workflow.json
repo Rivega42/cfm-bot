@@ -1,0 +1,22 @@
+{
+  "name": "CFM.2 - User Registration Flow",
+  "description": "Модульный workflow для пошаговой регистрации пользователей CFM Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "registration",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "registration-webhook",
+      "name": "Registration Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [250, 300],
+      "typeVersion": 1.1
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
