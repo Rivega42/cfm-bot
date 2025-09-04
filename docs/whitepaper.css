@@ -5,41 +5,69 @@
     padding-bottom: var(--space-3xl);
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
+    position: relative;
+}
+
+/* Add overlay for better text readability */
+.whitepaper-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 0;
 }
 
 .whitepaper-hero-content {
     max-width: 900px;
     margin: 0 auto;
     text-align: center;
+    position: relative;
+    z-index: 1;
 }
 
 .wp-badge {
     display: inline-block;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.95);
+    color: #667eea;
     padding: var(--space-sm) var(--space-lg);
     border-radius: var(--radius-lg);
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: var(--space-xl);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .wp-title {
-    font-size: clamp(36px, 6vw, 56px);
+    font-size: clamp(36px, 6vw, 64px);
     font-weight: 900;
     line-height: 1.2;
     margin-bottom: var(--space-lg);
     letter-spacing: -1px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.wp-title .gradient-text {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .wp-subtitle {
     font-size: 20px;
     line-height: 1.6;
-    opacity: 0.95;
+    color: rgba(255, 255, 255, 0.95);
     margin-bottom: var(--space-2xl);
     max-width: 700px;
     margin-left: auto;
     margin-right: auto;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    font-weight: 400;
 }
 
 .wp-meta {
@@ -53,16 +81,22 @@
     display: flex;
     gap: var(--space-sm);
     align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(10px);
 }
 
 .meta-label {
-    opacity: 0.8;
+    color: rgba(255, 255, 255, 0.9);
     font-size: 14px;
+    font-weight: 500;
 }
 
 .meta-value {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 16px;
+    color: white;
 }
 
 /* Table of Contents */
@@ -78,6 +112,7 @@
     padding: var(--space-2xl);
     border-radius: var(--radius-lg);
     border: 1px solid var(--cal-border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .toc-title {
@@ -137,6 +172,14 @@
     letter-spacing: -0.5px;
 }
 
+.wp-subtitle {
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-lg);
+    color: var(--cal-text);
+}
+
 .wp-text {
     font-size: 18px;
     line-height: 1.75;
@@ -173,6 +216,12 @@
     background: var(--cal-bg);
     border-radius: var(--radius-lg);
     border: 1px solid var(--cal-border);
+    transition: var(--transition);
+}
+
+.finding-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .finding-number {
@@ -275,6 +324,12 @@
     border-radius: var(--radius-lg);
     border: 1px solid var(--cal-border);
     text-align: center;
+    transition: var(--transition);
+}
+
+.source-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .source-card h4 {
@@ -301,10 +356,11 @@
 
 /* Finding Highlights */
 .finding-highlight {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
     padding: var(--space-xl);
     border-radius: var(--radius-lg);
     margin: var(--space-lg) 0;
+    border: 1px solid rgba(102, 126, 234, 0.2);
 }
 
 .finding-highlight h4 {
@@ -340,6 +396,7 @@
 .dimension-card:hover {
     transform: translateY(-4px);
     border-color: var(--cal-primary);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .dimension-icon {
@@ -515,6 +572,12 @@
     border-radius: var(--radius-lg);
     border: 2px solid var(--cal-border);
     text-align: center;
+    transition: var(--transition);
+}
+
+.result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .result-card.primary {
@@ -567,6 +630,7 @@
 
 .highlight-row td {
     color: var(--cal-text);
+    font-weight: 500;
 }
 
 /* Case Studies */
@@ -684,5 +748,13 @@
     
     .download-form {
         flex-direction: column;
+    }
+    
+    .wp-title {
+        font-size: 32px;
+    }
+    
+    .wp-subtitle {
+        font-size: 18px;
     }
 }
