@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFM - Co-Founder Matching System</title>
+    <meta name="description" content="Найди идеального co-founder'а для своего стартапа через умный matching в Telegram">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="CFM - Co-Founder Matching System">
+    <meta property="og:description" content="Найди идеального co-founder'а для своего стартапа">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cfm.mixbase.ru">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="#" class="logo">CFM</a>
+                <div class="nav-menu">
+                    <a href="#features" class="nav-link">Возможности</a>
+                    <a href="#how-it-works" class="nav-link">Как это работает</a>
+                    <a href="#stats" class="nav-link">Статистика</a>
+                    <a href="https://github.com/Rivega42/cfm-bot" class="nav-link" target="_blank">GitHub</a>
+                </div>
+                <a href="https://t.me/CFmatch_bot" class="nav-cta" target="_blank">
+                    Начать в Telegram
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Найди идеального<br>
+                    <span class="gradient-text">co-founder'а</span> для стартапа
+                </h1>
+                <p class="hero-description">
+                    Умный matching на основе 40+ параметров.<br>
+                    Прямо в Telegram. Бесплатно.
+                </p>
+                <div class="hero-actions">
+                    <a href="https://t.me/CFmatch_bot" class="btn btn-primary" target="_blank">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                        </svg>
+                        Запустить бота
+                    </a>
+                    <a href="#how-it-works" class="btn btn-secondary">
+                        Узнать больше
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">40+</div>
+                        <div class="stat-label">вопросов для точного matching</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">категорий совместимости</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">доступность в Telegram</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Почему CFM?</h2>
+                <p class="section-description">
+                    Мы решаем главную проблему стартапов — поиск правильного партнёра
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11a3 3 0 106 0 3 3 0 00-6 0m11-7v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2h12a2 2 0 012 2z"/>
+                            <path d="M12 17c-2.5 0-4 1.5-4 3h8c0-1.5-1.5-3-4-3z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Детальный профиль</h3>
+                    <p class="feature-description">
+                        40+ вопросов покрывают все аспекты: от технических навыков до жизненных ценностей
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Умный алгоритм</h3>
+                    <p class="feature-description">
+                        ML-алгоритмы анализируют совместимость по множеству параметров
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Безопасность</h3>
+                    <p class="feature-description">
+                        Контакты передаются только после взаимного согласия обеих сторон
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Экономия времени</h3>
+                    <p class="feature-description">
+                        Вместо сотен случайных встреч — только релевантные кандидаты
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">8 категорий</h3>
+                    <p class="feature-description">
+                        Оценка по всем важным аспектам: опыт, навыки, цели, ценности и другие
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Локация</h3>
+                    <p class="feature-description">
+                        Учитываем географию для офлайн-встреч или удалённой работы
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Как это работает?</h2>
+                <p class="section-description">
+                    Простой процесс из 4 шагов прямо в Telegram
+                </p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Запустите бота</h3>
+                    <p class="step-description">
+                        Откройте @CFmatch_bot в Telegram и нажмите /start
+                    </p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Заполните профиль</h3>
+                    <p class="step-description">
+                        Ответьте на вопросы о вашем опыте, навыках и целях
+                    </p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Получите matches</h3>
+                    <p class="step-description">
+                        Алгоритм подберёт наиболее подходящих кандидатов
+                    </p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Начните общение</h3>
+                    <p class="step-description">
+                        При взаимном интересе получите контакты друг друга
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="stats-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Статус проекта</h2>
+                <p class="section-description">
+                    Открытая разработка на GitHub
+                </p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-value">45%</div>
+                    <div class="stat-card-label">Готовность MVP</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 45%"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-value">8</div>
+                    <div class="stat-card-label">Таблиц в БД</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-value">40+</div>
+                    <div class="stat-card-label">Вопросов для анализа</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-value">5</div>
+                    <div class="stat-card-label">n8n workflows</div>
+                </div>
+            </div>
+            <div class="github-stats">
+                <a href="https://github.com/Rivega42/cfm-bot" class="github-link" target="_blank">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>Посмотреть на GitHub</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Готовы найти co-founder'а?</h2>
+                <p class="cta-description">
+                    Присоединяйтесь к системе умного matching прямо сейчас
+                </p>
+                <a href="https://t.me/CFmatch_bot" class="btn btn-primary btn-large" target="_blank">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                    </svg>
+                    Начать в Telegram
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <div class="footer-logo">CFM</div>
+                    <p class="footer-description">Co-Founder Matching System</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/Rivega42/cfm-bot" target="_blank">GitHub</a>
+                    <a href="https://t.me/CFmatch_bot" target="_blank">Telegram Bot</a>
+                    <a href="docs/ARCHITECTURE.html">Документация</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CFM. Open Source Project. MIT License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
