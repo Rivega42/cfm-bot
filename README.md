@@ -209,6 +209,9 @@ curl -X POST "https://api.telegram.org/bot{BOT_TOKEN}/setWebhook" \
 
 ## 🚧 Development Roadmap
 
+📍 **[View Full Interactive Roadmap →](ROADMAP.md)**  
+🌐 **[Live Roadmap Dashboard →](https://cfm.mixbase.ru/roadmap)**
+
 ### Phase 1 - Core MVP (Current)
 - [x] Database v3.0 schema
 - [x] Documentation update
@@ -216,14 +219,14 @@ curl -X POST "https://api.telegram.org/bot{BOT_TOKEN}/setWebhook" \
 - [ ] Complete question flow
 - [ ] Basic matching algorithm
 
-### Phase 2 - Enhanced Features (Q1 2025)
+### Phase 2 - Enhanced Features (Q2 2025)
 - [ ] Web interface
 - [ ] Advanced AI matching
 - [ ] Team formation (3-4 people)
 - [ ] Project marketplace
 - [ ] Interview automation
 
-### Phase 3 - Scale & Monetize (Q2 2025)
+### Phase 3 - Scale & Monetize (Q3 2025)
 - [ ] Mobile app
 - [ ] B2B features
 - [ ] API for partners
@@ -236,10 +239,10 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## 📊 Project Statistics
 
-- **Total Commits**: 15+
+- **Total Commits**: 20+
 - **Database Tables**: 38
 - **Code Lines**: ~10,000
-- **Documentation Pages**: 6
+- **Documentation Pages**: 7
 - **Workflows**: 8 planned
 - **API Endpoints**: 25+
 
@@ -252,7 +255,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Telegram Bot**: [@CFmatch_bot](https://t.me/CFmatch_bot)
 - **Issues**: [GitHub Issues](https://github.com/Rivega42/cfm-bot/issues)
 - **Wiki**: [Project Wiki](https://github.com/Rivega42/cfm-bot/wiki)
-- **Website**: [cfmatch.com](https://cfmatch.com)
+- **Website**: [cfm.mixbase.ru](https://cfm.mixbase.ru)
+- **Roadmap**: [Interactive Roadmap](https://cfm.mixbase.ru/roadmap)
 
 ## 🙏 Acknowledgments
 
@@ -273,6 +277,6 @@ If upgrading from v2.x:
 ---
 
 **Version**: 3.0.0  
-**Last Updated**: 2025-09-04  
+**Last Updated**: 2025-01-05  
 **Status**: Active Development  
 **Next Milestone**: Fix n8n nodes and complete question flow
