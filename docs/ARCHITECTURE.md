@@ -4,11 +4,12 @@
 1. [System Overview](#system-overview)
 2. [Architecture Layers](#architecture-layers)
 3. [Database Architecture](#database-architecture)
-4. [Component Architecture](#component-architecture)
-5. [Data Flow](#data-flow)
-6. [Integration Points](#integration-points)
-7. [Scaling Strategy](#scaling-strategy)
-8. [Security Architecture](#security-architecture)
+4. [Database Entity Relationship Diagram](#database-entity-relationship-diagram)
+5. [Component Architecture](#component-architecture)
+6. [Data Flow](#data-flow)
+7. [Integration Points](#integration-points)
+8. [Scaling Strategy](#scaling-strategy)
+9. [Security Architecture](#security-architecture)
 
 ## 🎯 System Overview
 
@@ -133,18 +134,22 @@ team_members         -- Team composition
 projects             -- Project registry
 ```
 
-#### 3. Questions & Interviews (4 tables)
+#### 3. Questions & Interviews (5 tables)
 ```sql
 questions            -- Question bank (40 loaded)
+question_categories  -- Question groupings
 user_answers         -- Response storage
 interview_sessions   -- Session tracking
+interview_templates  -- Interview structures
 interview_results    -- AI evaluations
 ```
 
-#### 4. Matching System (2 tables)
+#### 4. Matching System (4 tables)
 ```sql
 matches              -- Generated matches
 match_interactions   -- User decisions
+match_batches        -- Match groupings
+match_analytics      -- Performance metrics
 ```
 
 #### 5. Monetization (5 tables)
@@ -156,22 +161,23 @@ robokassa_payments   -- Gateway specifics
 payment_history      -- Audit trail
 ```
 
-#### 6. Bot Communication (3 tables)
+#### 6. Bot Communication (5 tables)
 ```sql
 bot_sessions         -- Conversation tracking
 bot_state            -- User state machine
+messages             -- Message history
 notification_queue   -- Message queue
+notification_templates -- Message templates
 ```
 
-#### 7. Analytics (7 tables)
+#### 7. Analytics (6 tables)
 ```sql
 user_actions         -- Event tracking
-match_analytics      -- Match performance
+user_scores          -- Reputation system
 conversion_funnel    -- User journey
 daily_reports        -- Aggregated metrics
-user_scores          -- Reputation system
-feedback             -- User feedback
 system_metrics       -- Performance data
+feedback             -- User feedback
 ```
 
 ### Data Types & Standards
@@ -180,6 +186,22 @@ system_metrics       -- Performance data
 - **JSON Storage**: JSONB for flexible data
 - **Arrays**: For multi-participant data
 - **Full-text Search**: pg_trgm extension
+
+## 📊 Database Entity Relationship Diagram
+
+> 🔗 **[View Complete Database ERD with all 38 tables](DATABASE_DIAGRAM.md)**
+
+The database uses a hybrid relational-document model with:
+- **38 tables** organized into 7 functional categories
+- **50+ indexes** for optimized query performance
+- **JSONB fields** for flexible, schema-less data storage
+- **Array columns** for multi-participant relationships
+- **Full-text search** capabilities on text fields
+
+### Key Relationships Summary:
+- **One-to-One**: users ↔ user_scores, users ↔ bot_state
+- **One-to-Many**: users → profiles, skills, answers, payments
+- **Many-to-Many**: users ↔ matches (via arrays), users ↔ teams
 
 ## 🔧 Component Architecture
 
@@ -420,12 +442,13 @@ GET  /api/payments/status/{id}
 
 ## 🔄 Version History
 
-- **v3.0.0** (Current): Complete architecture redesign
+- **v3.0.1** (Current): Added complete database ERD
+- **v3.0.0**: Complete architecture redesign
 - **v2.0.0**: Basic matching system
 - **v1.0.0**: MVP with registration only
 
 ---
 
-**Last Updated**: 2025-09-04
-**Version**: 3.0.0
+**Last Updated**: 2025-09-05  
+**Version**: 3.0.1  
 **Status**: Active Development
