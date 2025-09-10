@@ -1,454 +1,324 @@
-# 🏗️ CFM Bot Architecture v3.0
+# 🏗️ Архитектура CFM Bot v4.0
 
-## 📋 Table of Contents
-1. [System Overview](#system-overview)
-2. [Architecture Layers](#architecture-layers)
-3. [Database Architecture](#database-architecture)
-4. [Database Entity Relationship Diagram](#database-entity-relationship-diagram)
-5. [Component Architecture](#component-architecture)
-6. [Data Flow](#data-flow)
-7. [Integration Points](#integration-points)
-8. [Scaling Strategy](#scaling-strategy)
-9. [Security Architecture](#security-architecture)
+## Обзор
 
-## 🎯 System Overview
+CFM Bot построен на современном стеке с использованием Next.js 15, TypeScript, и Telegram Mini Apps.
 
-CFM Bot is a comprehensive cofounder matching platform built on a microservices architecture with the following core capabilities:
+## Технологический стек
 
-- **Multi-type Matching**: Pairs, teams (3-4 people), project-team matching
-- **Interview System**: Automated HR interviews and assessments
-- **Monetization**: Subscription-based with Robokassa payment integration
-- **Multi-channel**: Telegram bot, Web interface (planned), Mobile app (planned)
-- **AI-Powered**: Intelligent matching algorithms and conversation management
+### Frontend
+```typescript
+// Core
+- Next.js 15.0 (App Router)
+- TypeScript 5.0
+- React 18.3
 
-### System Capacity
-- **Target Users**: 1,000+ concurrent users
-- **Database Size**: 100MB - 1GB
-- **Response Time**: < 100ms for queries
-- **Uptime Target**: 99.9%
+// State & Data
+- Zustand (global state)
+- TanStack Query (server state)
+- tRPC Client (type-safe API)
 
-## 🏗️ Architecture Layers
+// UI & Styling
+- Tailwind CSS 3.4
+- Radix UI (primitives)
+- CVA (component variants)
+- Framer Motion (animations)
 
-### Layer 1: Presentation Layer
-```
-┌─────────────────────────────────────────────────┐
-│              PRESENTATION LAYER                  │
-├─────────────────────────────────────────────────┤
-│  • Telegram Bot (@CFmatch_bot)                  │
-│  • Web Application (React/Next.js) - Planned    │
-│  • Mobile App (React Native) - Planned          │
-│  • Admin Dashboard - Planned                    │
-└─────────────────────────────────────────────────┘
+// Telegram Integration
+- @telegram-apps/sdk v2
+- @telegram-apps/sdk-react v2
 ```
 
-**Technologies:**
-- Telegram Bot API
-- Webhook Pattern
-- Inline Keyboards
-- Rich Media Support
+### Backend
+```typescript
+// Runtime & Framework
+- Node.js 20 LTS
+- Next.js API Routes
+- tRPC v11 (API layer)
 
-### Layer 2: Orchestration Layer
-```
-┌─────────────────────────────────────────────────┐
-│              n8n ORCHESTRATION                   │
-├─────────────────────────────────────────────────┤
-│  Workflow ID: 82NNfa65ImefYweQ                  │
-│  Instance: https://n8n.1int.tech                │
-│                                                  │
-│  Workflows:                                      │
-│  • CFM.1 Main Router (Active)                   │
-│  • CFM.2 Registration Flow                      │
-│  • CFM.3 Question System                        │
-│  • CFM.4 Matching Engine                        │
-│  • CFM.5 Match Viewer                           │
-│  • CFM.6 Contact Exchange                       │
-│  • CFM.7 Payment Processing                     │
-│  • CFM.8 Analytics Engine                       │
-└─────────────────────────────────────────────────┘
-```
+// Database & ORM
+- PostgreSQL 15
+- Prisma 6.0
+- Redis 7 (cache)
 
-**Key Features:**
-- Event-driven architecture
-- Async processing
-- Error handling & retry logic
-- Workflow versioning
-- Real-time monitoring
+// Auth & Security
+- NextAuth.js v5
+- JWT tokens
+- bcrypt (password hashing)
 
-### Layer 3: Business Logic Layer
-```
-┌─────────────────────────────────────────────────┐
-│            BUSINESS LOGIC SERVICES               │
-├─────────────────────────────────────────────────┤
-│  User Service:                                   │
-│  • Registration & Validation                     │
-│  • Profile Management                            │
-│  • Authentication                                │
-│                                                  │
-│  Matching Service:                               │
-│  • Algorithm Execution                           │
-│  • Score Calculation                             │
-│  • Match Generation                              │
-│                                                  │
-│  Interview Service:                              │
-│  • Question Flow Management                      │
-│  • Response Processing                           │
-│  • AI Evaluation                                 │
-│                                                  │
-│  Payment Service:                                │
-│  • Subscription Management                       │
-│  • Robokassa Integration                         │
-│  • Transaction Processing                        │
-└─────────────────────────────────────────────────┘
+// Background Jobs
+- Bull Queue
+- Redis (queue backend)
+
+// Validation & Utils
+- Zod (schema validation)
+- date-fns (date handling)
+- nanoid (ID generation)
 ```
 
-### Layer 4: Data Layer
+## Архитектурные слои
+
+### 1. Presentation Layer (UI)
 ```
-┌─────────────────────────────────────────────────┐
-│              POSTGRESQL DATABASE                 │
-├─────────────────────────────────────────────────┤
-│  Version: PostgreSQL 15                          │
-│  Tables: 38                                      │
-│  Indexes: 50+                                    │
-│  Functions: 5+                                   │
-│  Triggers: 3+                                    │
-│  Views: 2+                                       │
-└─────────────────────────────────────────────────┘
-```
-
-## 💾 Database Architecture
-
-### Database Schema Categories
-
-#### 1. User Management (4 tables)
-```sql
-users                 -- Core user accounts
-user_profiles        -- Extended profiles
-user_skills          -- Skills and expertise
-user_types           -- User categorization
+src/
+├── app/                     # Next.js App Router
+│   ├── (auth)/             # Auth группа
+│   ├── (dashboard)/        # Dashboard группа
+│   └── telegram/           # Telegram Mini App
+├── components/
+│   ├── ui/                 # Базовые компоненты
+│   ├── features/           # Фича-компоненты
+│   └── layouts/            # Layouts
+└── styles/                 # Глобальные стили
 ```
 
-#### 2. Teams & Projects (3 tables)
-```sql
-teams                -- Team entities
-team_members         -- Team composition
-projects             -- Project registry
+### 2. Application Layer (Business Logic)
+```
+src/
+├── server/
+│   ├── api/               # tRPC routers
+│   │   ├── routers/      # API endpoints
+│   │   └── trpc.ts       # tRPC setup
+│   ├── services/         # Бизнес-логика
+│   │   ├── auth/        # Аутентификация
+│   │   ├── matching/    # Matching engine
+│   │   ├── chat/        # Chat система
+│   │   └── notifications/ # Уведомления
+│   └── utils/           # Server utilities
 ```
 
-#### 3. Questions & Interviews (5 tables)
-```sql
-questions            -- Question bank (40 loaded)
-question_categories  -- Question groupings
-user_answers         -- Response storage
-interview_sessions   -- Session tracking
-interview_templates  -- Interview structures
-interview_results    -- AI evaluations
+### 3. Data Layer
+```
+src/
+├── server/
+│   ├── db/              # Database
+│   │   ├── client.ts   # Prisma client
+│   │   └── redis.ts    # Redis client
+│   └── repositories/   # Data access
+prisma/
+├── schema.prisma       # Database schema
+└── migrations/        # SQL migrations
 ```
 
-#### 4. Matching System (4 tables)
-```sql
-matches              -- Generated matches
-match_interactions   -- User decisions
-match_batches        -- Match groupings
-match_analytics      -- Performance metrics
+## Основные компоненты
+
+### Authentication Flow
+```mermaid
+sequenceDiagram
+    participant User
+    participant TMA as Telegram Mini App
+    participant API as Next.js API
+    participant DB as PostgreSQL
+    
+    User->>TMA: Открывает приложение
+    TMA->>API: initData (Telegram данные)
+    API->>API: Валидация подписи
+    API->>DB: Создание/обновление user
+    DB-->>API: User data
+    API-->>TMA: JWT token
+    TMA-->>User: Авторизован
 ```
 
-#### 5. Monetization (5 tables)
-```sql
-subscription_plans   -- Available plans
-user_subscriptions   -- Active subscriptions
-payments             -- Transaction records
-robokassa_payments   -- Gateway specifics
-payment_history      -- Audit trail
-```
+### Matching System
+```typescript
+interface MatchingAlgorithm {
+  // Основные критерии
+  skills: number;        // Вес: 30%
+  experience: number;    // Вес: 20%
+  goals: number;        // Вес: 25%
+  location: number;     // Вес: 15%
+  availability: number; // Вес: 10%
+}
 
-#### 6. Bot Communication (5 tables)
-```sql
-bot_sessions         -- Conversation tracking
-bot_state            -- User state machine
-messages             -- Message history
-notification_queue   -- Message queue
-notification_templates -- Message templates
-```
-
-#### 7. Analytics (6 tables)
-```sql
-user_actions         -- Event tracking
-user_scores          -- Reputation system
-conversion_funnel    -- User journey
-daily_reports        -- Aggregated metrics
-system_metrics       -- Performance data
-feedback             -- User feedback
-```
-
-### Data Types & Standards
-- **Primary Keys**: UUID v4
-- **Timestamps**: WITH TIME ZONE
-- **JSON Storage**: JSONB for flexible data
-- **Arrays**: For multi-participant data
-- **Full-text Search**: pg_trgm extension
-
-## 📊 Database Entity Relationship Diagram
-
-> 🔗 **[View Complete Database ERD with all 38 tables](DATABASE_DIAGRAM.md)**
-
-The database uses a hybrid relational-document model with:
-- **38 tables** organized into 7 functional categories
-- **50+ indexes** for optimized query performance
-- **JSONB fields** for flexible, schema-less data storage
-- **Array columns** for multi-participant relationships
-- **Full-text search** capabilities on text fields
-
-### Key Relationships Summary:
-- **One-to-One**: users ↔ user_scores, users ↔ bot_state
-- **One-to-Many**: users → profiles, skills, answers, payments
-- **Many-to-Many**: users ↔ matches (via arrays), users ↔ teams
-
-## 🔧 Component Architecture
-
-### Main Router Component
-```javascript
-// CFM.1 Main Router Workflow Structure
-{
-  "nodes": [
-    "Telegram Webhook Trigger",
-    "Event Parser",
-    "Command Router (Switch)",
-    "Database Connection",
-    "Response Formatter",
-    "Telegram Sender"
-  ],
-  "connections": {
-    "linear": false,
-    "branching": true,
-    "error_handling": true
-  }
+// Scoring: 0-100
+function calculateMatchScore(
+  user1: Profile,
+  user2: Profile
+): number {
+  // Детальный алгоритм в services/matching
 }
 ```
 
-### User Flow Components
-
-#### Registration Flow
-```
-START → Check Existing User → 
-  ├─[Exists]→ Load Profile → Continue
-  └─[New]→ Create User → Set Type → 
-           Create Profile → Welcome Message
-```
-
-#### Question Flow (3-Stage Process)
-```
-Stage 1: Basic Questions (1-10)
-  ├─ Personal info
-  └─ Basic preferences
-
-Stage 2: Professional Questions (11-25)
-  ├─ Skills assessment
-  └─ Experience evaluation
-
-Stage 3: Matching Questions (26-40)
-  ├─ Team preferences
-  └─ Project interests
+### Real-time Features
+```typescript
+// WebSocket connections
+interface RealtimeEvents {
+  'match:new': { matchId: string };
+  'message:new': { chatId: string; message: Message };
+  'user:online': { userId: string };
+  'user:typing': { chatId: string; userId: string };
+}
 ```
 
-#### Matching Algorithm
-```
-Input: User Answers + Preferences
-  ↓
-Score Calculation:
-  • Skill Match: 30%
-  • Interest Alignment: 25%
-  • Experience Level: 20%
-  • Location/Timezone: 15%
-  • Personality Fit: 10%
-  ↓
-Output: Ranked Matches (Top 10)
-```
+## База данных
 
-## 🔄 Data Flow
+### Основные таблицы
+```sql
+-- Users & Profiles
+users (id, telegram_id, created_at...)
+profiles (user_id, bio, skills, goals...)
 
-### User Journey Flow
-```mermaid
-graph LR
-    A[User Message] --> B[Telegram Webhook]
-    B --> C[n8n Router]
-    C --> D{Command Type}
-    D -->|Registration| E[User Service]
-    D -->|Questions| F[Question Service]
-    D -->|Matching| G[Match Service]
-    D -->|Payment| H[Payment Service]
-    E --> I[PostgreSQL]
-    F --> I
-    G --> I
-    H --> I
-    I --> J[Response Builder]
-    J --> K[Send to User]
+-- Matching
+matches (id, user1_id, user2_id, score...)
+user_actions (user_id, target_id, action...)
+
+-- Communication
+chats (id, match_id, created_at...)
+messages (id, chat_id, sender_id, text...)
+
+-- Subscriptions
+subscriptions (id, user_id, plan, expires_at...)
+payments (id, subscription_id, amount...)
 ```
 
-### Match Generation Flow
-1. **Trigger**: User completes questions
-2. **Processing**: 
-   - Load user profile
-   - Find potential matches
-   - Calculate compatibility scores
-   - Apply filters (subscription limits)
-3. **Storage**: Save matches to database
-4. **Notification**: Alert both parties
-5. **Interaction**: Track accept/reject decisions
-
-### Payment Processing Flow
-1. **Initiation**: User selects plan
-2. **Generation**: Create Robokassa invoice
-3. **Redirect**: Send to payment page
-4. **Webhook**: Receive payment confirmation
-5. **Activation**: Update subscription
-6. **Confirmation**: Send receipt
-
-## 🔌 Integration Points
-
-### External Services
-
-#### Telegram Bot API
-- **Webhook URL**: `/webhook/45e44e1c-f611-45e9-94f7-b2247b25b8db`
-- **Methods Used**:
-  - sendMessage
-  - editMessageText
-  - answerCallbackQuery
-  - sendInvoice
-
-#### Robokassa Payment Gateway
-- **Endpoints**:
-  - Init: `https://auth.robokassa.ru/Merchant/Index.aspx`
-  - Result: `/webhook/robokassa/result`
-  - Success: `/webhook/robokassa/success`
-  - Fail: `/webhook/robokassa/fail`
-
-#### Future Integrations
-- OpenAI API (Advanced matching)
-- SendGrid (Email notifications)
-- Twilio (SMS verification)
-- Google Calendar (Interview scheduling)
-
-### Internal APIs
-
-#### REST Endpoints
-```
-GET  /api/users/{id}
-POST /api/users/register
-PUT  /api/users/{id}/profile
-
-GET  /api/questions/next
-POST /api/questions/answer
-
-GET  /api/matches/user/{id}
-POST /api/matches/interact
-
-POST /api/payments/create
-GET  /api/payments/status/{id}
+### Индексы и оптимизация
+```sql
+-- Критичные индексы
+CREATE INDEX idx_matches_users ON matches(user1_id, user2_id);
+CREATE INDEX idx_messages_chat ON messages(chat_id, created_at DESC);
+CREATE INDEX idx_user_actions ON user_actions(user_id, created_at DESC);
 ```
 
-## 📈 Scaling Strategy
+## Безопасность
 
-### Horizontal Scaling
-- **n8n Workers**: Add worker instances
-- **Database**: Read replicas for queries
-- **Cache Layer**: Redis for session storage
+### Authentication
+- Telegram InitData валидация
+- JWT с refresh tokens
+- Session management через Redis
 
-### Vertical Scaling
-- **Database**: Upgrade to larger instance
-- **n8n**: Increase memory/CPU allocation
-
-### Performance Optimization
-- **Indexes**: All foreign keys indexed
-- **Query Optimization**: Stored procedures for complex operations
-- **Caching**: Frequently accessed data
-- **Batch Processing**: Bulk operations for analytics
-
-### Monitoring & Metrics
-- **Application Metrics**:
-  - Response times
-  - Error rates
-  - Throughput
-- **Business Metrics**:
-  - User acquisition
-  - Match success rate
-  - Conversion funnel
-- **System Metrics**:
-  - CPU/Memory usage
-  - Database connections
-  - Queue lengths
-
-## 🔒 Security Architecture
-
-### Authentication & Authorization
-- **User Authentication**: Telegram ID validation
-- **Session Management**: JWT tokens (future)
-- **Role-based Access**: User, Admin, System
+### Authorization
+- Role-based access control (RBAC)
+- Resource-level permissions
+- API rate limiting
 
 ### Data Protection
-- **Encryption at Rest**: PostgreSQL TDE
-- **Encryption in Transit**: HTTPS/TLS
-- **PII Handling**: GDPR compliance
-- **Password Storage**: bcrypt hashing
+- Encryption at rest (PostgreSQL)
+- Encryption in transit (HTTPS)
+- Personal data anonymization
+- GDPR compliance
 
-### API Security
-- **Rate Limiting**: 100 requests/minute
-- **Input Validation**: All user inputs sanitized
-- **SQL Injection**: Parameterized queries
-- **XSS Protection**: Output encoding
+## Performance
 
-### Payment Security
-- **PCI Compliance**: Via Robokassa
-- **Transaction Verification**: Signature validation
-- **Audit Logging**: All payment events
+### Оптимизации
+1. **Database**
+   - Connection pooling
+   - Query optimization
+   - Proper indexing
+   - Materialized views для статистики
 
-### Backup & Recovery
-- **Database Backups**: Daily automated
-- **Point-in-time Recovery**: 7-day retention
-- **Disaster Recovery**: Off-site backup storage
-- **RTO Target**: 4 hours
-- **RPO Target**: 1 hour
+2. **Caching**
+   - Redis для сессий
+   - CDN для статики
+   - API response caching
+   - Database query caching
 
-## 🚀 Deployment Architecture
+3. **Frontend**
+   - Code splitting
+   - Image optimization
+   - Lazy loading
+   - Service Worker
 
-### Production Environment
+### Метрики
+- TTFB < 200ms
+- FCP < 1.5s
+- TTI < 3.5s
+- API response < 100ms (p95)
+
+## Масштабирование
+
+### Horizontal Scaling
+```yaml
+# Kubernetes deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cfm-bot-api
+spec:
+  replicas: 3  # Auto-scaling 3-10
+  ...
 ```
-┌──────────────────┐     ┌──────────────────┐
-│   Load Balancer  │────▶│   n8n Cluster    │
-└──────────────────┘     └──────────────────┘
-                               │
-                               ▼
-                         ┌──────────────────┐
-                         │   PostgreSQL      │
-                         │   Primary + Replica│
-                         └──────────────────┘
+
+### Database Scaling
+- Read replicas для queries
+- Write master для mutations
+- Connection pooling via PgBouncer
+
+### Caching Strategy
+- L1: In-memory cache (Node.js)
+- L2: Redis cache
+- L3: CDN cache
+
+## Monitoring & Observability
+
+### Logging
+- Structured logging (JSON)
+- Log levels: ERROR, WARN, INFO, DEBUG
+- Centralized via ELK stack
+
+### Metrics
+- Prometheus для метрик
+- Grafana для визуализации
+- Custom business metrics
+
+### Tracing
+- OpenTelemetry integration
+- Distributed tracing
+- Performance profiling
+
+### Error Tracking
+- Sentry для production
+- Source maps для debugging
+- User session replay
+
+## Deployment
+
+### Environments
+1. **Development** - Local Docker
+2. **Staging** - Vercel Preview
+3. **Production** - Vercel/VPS
+
+### CI/CD Pipeline
+```yaml
+# GitHub Actions
+name: Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  test:
+    # Run tests
+  build:
+    # Build application
+  deploy:
+    # Deploy to Vercel
 ```
 
-### Infrastructure Requirements
-- **n8n Server**: 4 CPU, 8GB RAM
-- **PostgreSQL**: 2 CPU, 4GB RAM, 100GB SSD
-- **Redis Cache**: 1 CPU, 2GB RAM
-- **Monitoring**: Grafana + Prometheus
+### Infrastructure as Code
+```terraform
+# Terraform configuration
+resource "vercel_project" "cfm_bot" {
+  name = "cfm-bot"
+  framework = "nextjs"
+  ...
+}
+```
 
-## 📊 Performance Targets
+## Disaster Recovery
 
-| Metric | Target | Current |
-|--------|--------|---------|
-| Response Time | < 100ms | - |
-| Concurrent Users | 1000+ | - |
-| Uptime | 99.9% | - |
-| Match Calculation | < 500ms | - |
-| Database Size | 1GB | ~50MB |
-| Daily Active Users | 500+ | - |
+### Backup Strategy
+- Database: Daily snapshots
+- Files: S3 versioning
+- Code: Git history
 
-## 🔄 Version History
+### RTO/RPO
+- RTO: 1 hour
+- RPO: 15 minutes
 
-- **v3.0.1** (Current): Added complete database ERD
-- **v3.0.0**: Complete architecture redesign
-- **v2.0.0**: Basic matching system
-- **v1.0.0**: MVP with registration only
+### Failover
+- Database: Automatic failover to replica
+- Application: Multi-region deployment
+- Cache: Redis Sentinel
 
 ---
 
-**Last Updated**: 2025-09-05  
-**Version**: 3.0.1  
-**Status**: Active Development
+*Последнее обновление: 2025-01-10*
