@@ -1,167 +1,178 @@
-# 📝 CFM Bot TODO List v3.0
+# TODO List - CFM Bot v4.0
 
-**Last Updated**: 2025-09-04  
-**Sprint**: MVP Development  
-**Overall Progress**: 56%
+## 🚨 Критические задачи (Sprint 1 - до 15.01.2025)
 
-## 🔴 Critical Priority (Blockers)
+### Backend Setup
+- [ ] Инициализация Next.js проекта
+- [ ] Настройка Prisma с существующей БД
+- [ ] Базовая структура tRPC
+- [ ] Настройка NextAuth для Telegram
+- [ ] Docker compose для локальной разработки
 
-- [ ] **CFM-001**: Fix n8n node type prefixes ([Issue #6](https://github.com/rivega42/cfm-bot/issues/6))
-  - Update all `n8n-nodes-base.` to `nodes-base.`
-  - Keep Switch node as-is (do not change type)
-  - Test import in n8n v1.108.2
-  - **ETA**: 2 hours
-  - **Status**: 🔄 In Progress
+### Authentication
+- [ ] Telegram InitData валидация
+- [ ] JWT токены и refresh логика
+- [ ] Session management
+- [ ] Rate limiting
 
-- [ ] **CFM-002**: Implement inline keyboard support
-  - Use HTTP Request instead of Telegram node
-  - Create keyboard builder helper
-  - Handle callback_query events
-  - **ETA**: 4 hours
-  - **Status**: ⏳ Queued
+### Core API Endpoints
+- [ ] POST /api/auth/telegram - вход
+- [ ] GET /api/users/me - профиль
+- [ ] PATCH /api/users/profile - обновление
+- [ ] GET /api/questions - вопросы для онбординга
+- [ ] POST /api/answers - сохранение ответов
 
-## 🟡 Medium Priority (Core Features)
+## 🔧 Основные задачи (Sprint 2 - до 22.01.2025)
 
-### User Management
-- [ ] **CFM-003**: Complete registration flow
-  - Multi-type user support (individual/team/project)
-  - Profile creation wizard
-  - Skill selection interface
-  - **ETA**: 6 hours
+### Telegram Mini App
+- [ ] Базовая структура приложения
+- [ ] Роутинг и навигация
+- [ ] Компоненты в стиле Cal.com
+- [ ] Интеграция @telegram-apps/sdk
+- [ ] Темная/светлая тема
 
-- [ ] **CFM-004**: Session management
-  - Implement TTL on bot_sessions
-  - Handle timeouts gracefully
-  - State recovery mechanism
-  - **ETA**: 3 hours
+### Matching System
+- [ ] Алгоритм подбора v1
+- [ ] Scoring система
+- [ ] Фильтры и предпочтения
+- [ ] API для получения матчей
+- [ ] Like/Pass механика
 
-### Question System
-- [ ] **CFM-005**: Implement 3-stage question flow
-  - Stage 1: Basic info (Q1-10)
-  - Stage 2: Professional (Q11-25)
-  - Stage 3: Matching preferences (Q26-40)
-  - Progress tracking
-  - **ETA**: 8 hours
+### Real-time Features
+- [ ] WebSocket setup
+- [ ] Уведомления о новых матчах
+- [ ] Онлайн статус
+- [ ] Typing indicators
 
-- [ ] **CFM-006**: Answer validation
-  - Input type checking
-  - Range validation
-  - Required field enforcement
-  - **ETA**: 2 hours
+## 📋 Дополнительные задачи (Sprint 3 - до 29.01.2025)
 
-### Matching Engine
-- [ ] **CFM-007**: Design matching algorithm
-  - Define scoring weights
-  - Implement compatibility matrix
-  - Create ranking system
-  - **ETA**: 12 hours
+### Chat System
+- [ ] Создание чатов при mutual match
+- [ ] Отправка/получение сообщений
+- [ ] Медиа файлы через S3
+- [ ] Уведомления в Telegram
+- [ ] История сообщений
 
-- [ ] **CFM-008**: Build match generation workflow
-  - Query eligible users
-  - Calculate scores
-  - Apply subscription limits
-  - **ETA**: 6 hours
-
-## 🟢 Low Priority (Future Features)
-
-### Payment System
-- [ ] **CFM-009**: Robokassa integration
-  - Setup test credentials
-  - Create payment workflow
-  - Handle webhooks
-  - **ETA**: 8 hours
+### Premium Features
+- [ ] Система подписок
+- [ ] Payment gateway интеграция
+- [ ] Premium преимущества
+- [ ] Billing management
 
 ### Analytics
-- [ ] **CFM-010**: Create analytics dashboard
-  - User acquisition funnel
-  - Match success rates
-  - Revenue metrics
-  - **ETA**: 10 hours
+- [ ] User engagement metrics
+- [ ] Matching statistics
+- [ ] Conversion funnel
+- [ ] Admin dashboard
 
-### Interview System
-- [ ] **CFM-011**: HR interview automation
-  - Question bank creation
-  - AI evaluation integration
-  - Result reporting
-  - **ETA**: 16 hours
+## 🧪 Тестирование (Sprint 4 - до 05.02.2025)
 
-## 📁 Documentation Tasks
+### Unit Tests
+- [ ] API endpoints
+- [ ] Business logic
+- [ ] Utils и helpers
+- [ ] React components
 
-- [x] Complete ARCHITECTURE.md
-- [ ] Update API.md with all endpoints
-- [ ] Create DEPLOYMENT.md guide
-- [ ] Write TESTING.md procedures
-- [ ] Add inline code comments
+### Integration Tests
+- [ ] Auth flow
+- [ ] Matching процесс
+- [ ] Chat система
+- [ ] Payment flow
 
-## 🧪 Testing Requirements
+### E2E Tests
+- [ ] Onboarding flow
+- [ ] Matching и chat
+- [ ] Profile управление
+- [ ] Premium покупка
 
-- [ ] Unit tests for core functions
-- [ ] Integration tests for workflows
-- [ ] End-to-end bot testing
-- [ ] Load testing (1000 users)
-- [ ] Security testing
+## 🚀 Deployment (Sprint 5 - до 12.02.2025)
 
-## 🚀 DevOps Tasks
+### Infrastructure
+- [ ] Vercel setup
+- [ ] PostgreSQL production
+- [ ] Redis cluster
+- [ ] S3 bucket
+- [ ] Domain и SSL
 
-- [ ] Setup CI/CD pipeline
-- [ ] Configure monitoring (Grafana)
-- [ ] Implement backup strategy
-- [ ] Create Docker containers
-- [ ] Setup staging environment
+### Monitoring
+- [ ] Sentry integration
+- [ ] Grafana dashboards
+- [ ] Log aggregation
+- [ ] Uptime monitoring
+- [ ] Performance metrics
 
-## 💡 Ideas & Improvements
+### Documentation
+- [ ] API documentation
+- [ ] Deployment guide
+- [ ] Contributing guide
+- [ ] User manual
+- [ ] Video tutorials
 
-- [ ] Voice message support
-- [ ] Multi-language support (EN/RU)
-- [ ] Web dashboard for users
-- [ ] Mobile app development
-- [ ] AI chat assistant
-- [ ] Video introductions
-- [ ] Skill verification system
-- [ ] Referral program
+## 📈 Post-Launch (После 12.02.2025)
 
-## ✅ Completed Tasks
+### Optimization
+- [ ] Database индексы
+- [ ] Query оптимизация
+- [ ] Caching стратегия
+- [ ] Image optimization
+- [ ] Bundle size reduction
 
-- [x] Database schema v3.0
-- [x] Project documentation structure
-- [x] GitHub repository setup
-- [x] Telegram bot creation
-- [x] n8n instance configuration
-- [x] Load 40 questions to DB
-- [x] Complete ARCHITECTURE.md
+### Features v2
+- [ ] AI-powered matching
+- [ ] Video calls
+- [ ] Team formation
+- [ ] Events и meetups
+- [ ] Mentorship program
 
-## 📊 Sprint Planning
+### Mobile Apps
+- [ ] React Native версия
+- [ ] iOS native app
+- [ ] Android native app
+- [ ] Desktop app (Electron)
 
-### Week 1 (Current)
-- Fix critical n8n issues
-- Complete registration flow
-- Start question system
+## 🐛 Известные проблемы
 
-### Week 2
-- Finish question system
-- Design matching algorithm
-- Begin match generation
+1. **Database**: Необходима оптимизация индексов
+2. **Performance**: Медленный initial load
+3. **UX**: Требуется улучшение onboarding flow
+4. **Security**: Добавить 2FA
+5. **i18n**: Полная локализация
 
-### Week 3
-- Complete matching engine
-- Start payment integration
-- Begin testing phase
+## 📝 Заметки
 
-### Week 4
-- Finish payment system
-- Complete all testing
-- Deploy MVP version
+### Приоритеты
+1. **MVP функционал** - базовый matching и chat
+2. **Стабильность** - error handling и monitoring
+3. **UX** - плавные анимации и отзывчивый UI
+4. **Performance** - быстрая загрузка и отклик
+5. **Scalability** - готовность к росту
 
-## 🔗 Resources
+### Технический долг
+- Рефакторинг legacy кода из n8n
+- Миграция на Edge Runtime
+- Внедрение микросервисной архитектуры
+- GraphQL вместо tRPC (обсуждается)
 
-- [Project Board](https://github.com/rivega42/cfm-bot/projects)
-- [Issues](https://github.com/rivega42/cfm-bot/issues)
-- [n8n Docs](https://docs.n8n.io)
-- [Telegram Bot API](https://core.telegram.org/bots/api)
-- [Robokassa Docs](https://docs.robokassa.ru)
+### Метрики успеха
+- Time to first match < 24h
+- Message response rate > 60%
+- User retention D7 > 40%
+- Premium conversion > 5%
+- NPS score > 50
 
 ---
 
-**Note**: Tasks are prioritized using MoSCoW method (Must/Should/Could/Won't).  
-**Update Frequency**: Daily during active development.  
-**Review Cycle**: Weekly sprint planning sessions.
+## Легенда
+- 🚨 Критически важно
+- 🔧 Основная функциональность
+- 📋 Дополнительные фичи
+- 🧪 Тестирование
+- 🚀 Deployment
+- 📈 Рост и масштабирование
+- 🐛 Баги и проблемы
+- 📝 Заметки и идеи
+
+---
+
+*Последнее обновление: 2025-01-10*
+*Следующий review: 2025-01-15*

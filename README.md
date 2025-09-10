@@ -1,307 +1,392 @@
-# 🚀 CFM Bot - Modern CoFounder Matching Platform
+# 🚀 CFM Bot - CoFounder Matching Platform v4.0
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.5-black)](https://nextjs.org)
-[![React](https://img.shields.io/badge/React-19-blue)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue)](https://typescriptlang.org)
+[![Next.js](https://img.shields.io/badge/Next.js-15.0-black)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791)](https://postgresql.org)
-[![Telegram](https://img.shields.io/badge/Telegram-Mini_App-26A5E4)](https://t.me/CFmatch_bot)
-[![Status](https://img.shields.io/badge/Status-Migration_to_v4-orange)](https://github.com/Rivega42/cfm-bot)
+[![Telegram Mini App](https://img.shields.io/badge/Telegram-Mini%20App-26A5E4)](https://t.me/CFmatch_bot)
+[![Project Status](https://img.shields.io/badge/Status-v4.0%20Migration-orange)](https://github.com/Rivega42/cfm-bot)
 
-## 📢 Important Update
+> **🔄 Важно:** Проект переходит с n8n на современный стек Next.js + tRPC. Старая документация доступна в [/archive/n8n](/archive/n8n)
 
-**We are migrating from n8n-based architecture to a modern Next.js + Telegram Mini App solution!**
+## 📋 Содержание
 
-- 📂 **Old n8n implementation**: See [`/archive/n8n-v3/`](archive/n8n-v3/README.md)
-- 🚀 **New Next.js implementation**: Currently in active development
-- 📊 **Migration status**: 35% complete
+- [О проекте](#о-проекте)
+- [Новая архитектура v4.0](#новая-архитектура-v40)
+- [Технологический стек](#технологический-стек)
+- [Быстрый старт](#быстрый-старт)
+- [Структура проекта](#структура-проекта)
+- [API документация](#api-документация)
+- [База данных](#база-данных)
+- [Telegram Mini App](#telegram-mini-app)
+- [Deployment](#deployment)
+- [Миграция с v3.0](#миграция-с-v30)
 
-## 🎯 Why We're Migrating
+## 🎯 О проекте
 
-| Problem with n8n | Solution with Next.js |
-|-----------------|----------------------|
-| Limited control over code | Full TypeScript codebase |
-| Slow development (2 days/feature) | Fast iteration (2 hours/feature) |
-| Poor debugging capabilities | Modern dev tools & hot reload |
-| 800ms response times | 50ms response times |
-| 100 RPS limit | 10,000+ RPS capacity |
-| $50/month hosting | $0-20/month on Vercel |
+**CFM Bot** - платформа для поиска со-основателей стартапов через Telegram Mini App. Система использует интеллектуальный матчинг на основе навыков, опыта и целей.
 
-## 🏗️ New Architecture Overview
+### Ключевые функции
 
+- 🔐 **Авторизация через Telegram** - безопасный вход без паролей
+- 🎯 **Умный матчинг** - алгоритм подбора со-основателей
+- 💬 **Чат в Telegram** - общение прямо в мессенджере
+- 📊 **Аналитика** - статистика и инсайты
+- 🌍 **Мультиязычность** - поддержка RU/EN
+- 💎 **Премиум функции** - расширенные возможности
+
+## 🏗️ Новая архитектура v4.0
+
+```mermaid
+graph TB
+    subgraph "Frontend"
+        TMA[Telegram Mini App]
+        WEB[Web Dashboard]
+    end
+    
+    subgraph "Backend"
+        API[Next.js API Routes]
+        TRPC[tRPC Server]
+        AUTH[Auth Service]
+        MATCH[Matching Engine]
+        NOTIFY[Notification Service]
+    end
+    
+    subgraph "Infrastructure"
+        DB[(PostgreSQL)]
+        REDIS[(Redis)]
+        S3[S3 Storage]
+        QUEUE[Bull Queue]
+    end
+    
+    subgraph "External"
+        TG[Telegram Bot API]
+        SMTP[Email Service]
+        PAY[Payment Gateway]
+    end
+    
+    TMA -->|WebSocket| API
+    WEB -->|HTTPS| API
+    API --> TRPC
+    TRPC --> AUTH
+    TRPC --> MATCH
+    TRPC --> NOTIFY
+    
+    AUTH --> DB
+    MATCH --> DB
+    MATCH --> REDIS
+    NOTIFY --> QUEUE
+    
+    QUEUE --> TG
+    QUEUE --> SMTP
+    API --> PAY
 ```
-┌─────────────────────────────────────────────────────────┐
-│                   Telegram Mini App                      │
-│                    (React 19 + TWA SDK)                  │
-└────────────────────────┬────────────────────────────────┘
-                         │ HTTPS
-                         ▼
-┌─────────────────────────────────────────────────────────┐
-│                    Next.js 15 Backend                    │
-│                                                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │  API Routes  │  │Server Actions│  │   WebSocket  │ │
-│  └──────────────┘  └──────────────┘  └──────────────┘ │
-│                                                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │    Auth      │  │   Matching   │  │  Questions   │ │
-│  │   Service    │  │    Engine    │  │   Service    │ │
-│  └──────────────┘  └──────────────┘  └──────────────┘ │
-└────────────────────────┬────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────┐
-│                     PostgreSQL                           │
-│         (38 tables - fully compatible with v3)          │
-└─────────────────────────────────────────────────────────┘
-```
 
-## ✨ Key Features (v4.0)
+### Преимущества новой архитектуры
 
-### 🎨 User Experience
-- **Native Telegram Mini App** - Rich UI instead of bot commands
-- **Real-time updates** - WebSocket connections
-- **Instant responses** - 50ms latency
-- **Offline support** - PWA capabilities
-- **Beautiful UI** - Cal.com inspired design
+- ✅ **Type Safety** - полная типизация с TypeScript
+- ✅ **Real-time** - WebSocket поддержка
+- ✅ **Scalability** - горизонтальное масштабирование
+- ✅ **Performance** - кэширование и оптимизация
+- ✅ **Developer Experience** - современные инструменты
+- ✅ **Testing** - покрытие тестами >80%
 
-### 🛠️ Technical Excellence
-- **Type Safety** - 100% TypeScript
-- **Modern Stack** - Next.js 15, React 19
-- **Edge Functions** - Global deployment
-- **Server Components** - Optimal performance
-- **tRPC** - End-to-end type safety
+## 🛠️ Технологический стек
 
-### 💼 Business Features
-- **Multi-type Matching** - Cofounders, teams, projects
-- **AI-powered Algorithm** - Smart compatibility scoring
-- **Subscription System** - Stripe/Robokassa integration
-- **Analytics Dashboard** - Real-time metrics
-- **Interview Platform** - Automated HR screening
+### Frontend
+- **Framework:** Next.js 15.0 (App Router)
+- **Language:** TypeScript 5.0
+- **Styling:** Tailwind CSS 3.4
+- **State:** Zustand + React Query
+- **Telegram:** @telegram-apps/sdk
+- **UI:** Radix UI + CVA
 
-## 🚀 Quick Start
+### Backend
+- **Runtime:** Node.js 20 LTS
+- **API:** tRPC v11
+- **ORM:** Prisma 6.0
+- **Auth:** NextAuth.js v5
+- **Validation:** Zod
+- **Queue:** Bull + Redis
 
-### Prerequisites
+### Infrastructure
+- **Database:** PostgreSQL 15
+- **Cache:** Redis 7
+- **Storage:** S3-compatible
+- **Hosting:** Vercel / VPS
+- **Monitoring:** Sentry + Grafana
+
+## 🚀 Быстрый старт
+
+### Требования
+
 - Node.js 20+
 - PostgreSQL 15+
-- npm/yarn/pnpm
-- Telegram Bot Token
+- Redis 7+
+- pnpm 9+
 
-### Installation
+### Установка
 
 ```bash
-# Clone repository
-git clone https://github.com/Rivega42/cfm-bot.git
+# Клонирование репозитория
+git clone https://github.com/rivega42/cfm-bot.git
 cd cfm-bot
 
-# Install dependencies
-npm install
+# Установка зависимостей
+pnpm install
 
-# Setup environment
+# Настройка переменных окружения
 cp .env.example .env.local
-# Edit .env.local with your credentials
+# Отредактируйте .env.local с вашими настройками
 
-# Setup database
-npm run db:migrate
-npm run db:seed
+# Инициализация базы данных
+pnpm db:push
+pnpm db:seed
 
-# Run development server
-npm run dev
-
-# Open http://localhost:3000
+# Запуск в режиме разработки
+pnpm dev
 ```
 
-### Environment Variables
+### Переменные окружения
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/cfm_db"
+DATABASE_URL="postgresql://user:password@localhost:5432/cfm_bot"
+
+# Redis
+REDIS_URL="redis://localhost:6379"
 
 # Telegram
 TELEGRAM_BOT_TOKEN="your_bot_token"
-TELEGRAM_WEBAPP_URL="https://your-domain.com/twa"
+TELEGRAM_WEBHOOK_SECRET="your_webhook_secret"
 
-# Authentication
-NEXTAUTH_SECRET="your_secret"
+# NextAuth
 NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your_secret_key"
 
-# Payments (optional)
-STRIPE_SECRET_KEY="sk_test_..."
-ROBOKASSA_MERCHANT="your_merchant"
+# S3 Storage
+S3_ENDPOINT="your_s3_endpoint"
+S3_ACCESS_KEY="your_access_key"
+S3_SECRET_KEY="your_secret_key"
+S3_BUCKET="cfm-bot"
+
+# Monitoring
+SENTRY_DSN="your_sentry_dsn"
 ```
 
-## 📁 Project Structure
+## 📁 Структура проекта
 
 ```
 cfm-bot/
-├── src/                    # Source code
-│   ├── app/               # Next.js App Router
-│   │   ├── api/          # API routes
-│   │   ├── twa/          # Telegram Web App
-│   │   └── (dashboard)/  # Admin panel
-│   ├── components/        # React components
-│   ├── lib/              # Utilities
-│   └── services/         # Business logic
-├── prisma/                # Database schema
-├── public/               # Static assets
-├── tests/                # Test files
-├── archive/              # Old n8n implementation
-│   └── n8n-v3/          # Version 3.0 backup
-└── docs/                 # Documentation
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── api/                # API Routes
+│   │   ├── auth/               # Auth pages
+│   │   ├── dashboard/          # Dashboard pages
+│   │   └── telegram/           # Telegram Mini App
+│   ├── server/                 # Backend logic
+│   │   ├── api/               # tRPC routers
+│   │   ├── auth/              # Auth config
+│   │   ├── db/                # Database client
+│   │   └── services/          # Business logic
+│   ├── lib/                   # Shared utilities
+│   ├── components/            # React components
+│   └── styles/               # Global styles
+├── prisma/                    # Database schema
+├── public/                   # Static assets
+├── tests/                    # Test files
+├── docs/                     # Documentation
+└── archive/                  # Legacy n8n code
+    └── n8n/                 # Old workflows
 ```
 
-## 📊 Migration Progress
+## 📚 API документация
 
-| Component | Status | Progress | Notes |
-|-----------|--------|----------|-------|
-| **Database Schema** | ✅ Ready | 100% | Fully compatible with v3 |
-| **API Endpoints** | 🚧 In Progress | 40% | Core endpoints done |
-| **Authentication** | 🚧 In Progress | 60% | Telegram auth works |
-| **Questions Flow** | 📝 Planned | 20% | UI designed |
-| **Matching Engine** | 📝 Planned | 10% | Algorithm ported |
-| **Mini App UI** | 🚧 In Progress | 50% | 5 screens ready |
-| **WebSocket** | 📝 Planned | 0% | Not started |
-| **Payments** | 📝 Planned | 0% | Not started |
-| **Analytics** | 📝 Planned | 0% | Not started |
+### Основные endpoints
 
-## 🎯 Roadmap
+#### Authentication
+```typescript
+// Вход через Telegram
+POST /api/auth/telegram
+Body: { initData: string }
 
-### Phase 1: Core Migration (Current - Week 1-2)
-- [x] Architecture design
-- [x] Project setup
-- [ ] Basic API implementation
-- [ ] Authentication flow
-- [ ] Database connection
+// Обновление профиля
+PATCH /api/users/profile
+Body: { name?, skills?, bio?, ... }
+```
 
-### Phase 2: Feature Parity (Week 3-4)
-- [ ] Questions system
-- [ ] Matching algorithm
-- [ ] User profiles
-- [ ] Basic Mini App
+#### Matching
+```typescript
+// Получить матчи
+GET /api/matches
+Query: { limit?, offset?, filters? }
 
-### Phase 3: Enhanced Features (Month 2)
-- [ ] Real-time updates
-- [ ] Advanced matching
-- [ ] Payment integration
-- [ ] Analytics dashboard
+// Отправить like/pass
+POST /api/matches/:userId/action
+Body: { action: 'like' | 'pass' }
+```
 
-### Phase 4: Production (Month 3)
-- [ ] Performance optimization
-- [ ] Security audit
-- [ ] Load testing
-- [ ] Documentation
-- [ ] Launch 🚀
+#### Messages
+```typescript
+// Получить чаты
+GET /api/chats
 
-## 🔧 Development
+// Отправить сообщение
+POST /api/chats/:chatId/messages
+Body: { text: string }
+```
+
+Полная документация API: [/docs/API.md](/docs/API.md)
+
+## 💾 База данных
+
+### Основные таблицы
+
+- **users** - профили пользователей
+- **profiles** - расширенная информация
+- **matches** - связи между пользователями
+- **messages** - сообщения в чатах
+- **subscriptions** - премиум подписки
+- **notifications** - уведомления
+
+Полная схема: [/docs/DATABASE.md](/docs/DATABASE.md)
+
+### Миграции
 
 ```bash
-# Run development server
-npm run dev
+# Создать новую миграцию
+pnpm db:migrate:dev
 
-# Run tests
-npm test
+# Применить миграции
+pnpm db:migrate
 
-# Build for production
-npm run build
-
-# Start production server
-npm start
-
-# Database commands
-npm run db:migrate     # Run migrations
-npm run db:seed        # Seed data
-npm run db:studio      # Open Prisma Studio
-
-# Code quality
-npm run lint          # Lint code
-npm run format        # Format code
-npm run type-check    # TypeScript check
+# Откатить миграцию
+pnpm db:migrate:reset
 ```
 
-## 📚 Documentation
+## 📱 Telegram Mini App
 
-- [Architecture Overview](docs/architecture/README.md)
-- [API Documentation](docs/api/README.md)
-- [Database Schema](docs/database/README.md)
-- [Deployment Guide](docs/deployment/README.md)
-- [Migration Guide](docs/migration/README.md)
+### Инициализация
 
-### Legacy Documentation (n8n v3)
-- [Old Architecture](archive/n8n-v3/docs/ARCHITECTURE.md)
-- [n8n Workflows](archive/n8n-v3/docs/WORKFLOWS.md)
+```typescript
+import { initMiniApp } from '@telegram-apps/sdk'
 
-## 🧪 Testing
+const miniApp = initMiniApp()
+miniApp.ready()
 
-We use a comprehensive testing strategy:
+// Получить данные пользователя
+const initData = miniApp.initDataUnsafe
+```
+
+### Навигация
+
+```typescript
+// Показать кнопку "Назад"
+miniApp.BackButton.show()
+
+// Открыть ссылку
+miniApp.openLink('https://example.com')
+
+// Закрыть приложение
+miniApp.close()
+```
+
+### Темизация
+
+```css
+:root {
+  --tg-theme-bg-color: var(--tg-theme-bg-color);
+  --tg-theme-text-color: var(--tg-theme-text-color);
+  --tg-theme-hint-color: var(--tg-theme-hint-color);
+  --tg-theme-link-color: var(--tg-theme-link-color);
+  --tg-theme-button-color: var(--tg-theme-button-color);
+  --tg-theme-button-text-color: var(--tg-theme-button-text-color);
+}
+```
+
+## 🚢 Deployment
+
+### Vercel (рекомендуется)
+
+1. Подключите репозиторий к Vercel
+2. Настройте переменные окружения
+3. Deploy!
+
+### VPS
 
 ```bash
-# Unit tests
-npm run test:unit
+# Build проекта
+pnpm build
 
-# Integration tests
-npm run test:integration
+# Запуск через PM2
+pm2 start ecosystem.config.js
 
-# E2E tests
-npm run test:e2e
-
-# Coverage report
-npm run test:coverage
+# Настройка Nginx
+sudo nginx -t
+sudo systemctl reload nginx
 ```
 
-## 🚀 Deployment
+Подробная инструкция: [/docs/DEPLOYMENT.md](/docs/DEPLOYMENT.md)
 
-### Vercel (Recommended)
+## 🔄 Миграция с v3.0
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Rivega42/cfm-bot)
+### Что изменилось
 
-### Manual Deployment
+1. **Архитектура** - переход с n8n на Next.js
+2. **API** - REST → tRPC
+3. **База данных** - та же схема, новый ORM (Prisma)
+4. **Frontend** - полноценный Telegram Mini App
 
-```bash
-# Build the application
-npm run build
+### План миграции
 
-# Set production environment
-export NODE_ENV=production
+1. ✅ Сохранить текущие данные
+2. ✅ Развернуть новую инфраструктуру
+3. ⏳ Мигрировать бизнес-логику
+4. ⏳ Обновить Telegram Bot
+5. ⏳ Тестирование
+6. ⏳ Постепенный переход пользователей
 
-# Start the server
-npm start
-```
+Детальный план: [/docs/MIGRATION.md](/docs/MIGRATION.md)
 
-## 📈 Performance Metrics
+## 📊 Статус проекта
 
-| Metric | n8n (old) | Next.js (new) | Improvement |
-|--------|-----------|---------------|-------------|
-| Response Time | 800ms | 50ms | **16x faster** |
-| Throughput | 100 RPS | 10,000 RPS | **100x more** |
-| Memory Usage | 500MB | 150MB | **3x less** |
-| Startup Time | 30s | 2s | **15x faster** |
-| Development Speed | 2 days/feature | 2 hours/feature | **8x faster** |
+### Completed ✅
+- Структура базы данных
+- Архитектура приложения
+- Базовая настройка проекта
 
-## 🤝 Contributing
+### In Progress 🚧
+- API endpoints (30%)
+- Telegram Mini App UI (20%)
+- Matching алгоритм (10%)
+- Тестирование (5%)
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+### Planned 📅
+- Payment интеграция
+- Email уведомления
+- Аналитика
+- Admin панель
 
-## 📜 License
+## 🤝 Контрибьютинг
 
-MIT License - see [LICENSE](LICENSE) for details.
+1. Fork репозитория
+2. Создайте feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit изменения (`git commit -m 'Add AmazingFeature'`)
+4. Push в branch (`git push origin feature/AmazingFeature`)
+5. Откройте Pull Request
 
-## 🆘 Support
+## 📝 Лицензия
 
-- **Documentation**: [docs/](docs/)
-- **Issues**: [GitHub Issues](https://github.com/Rivega42/cfm-bot/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/Rivega42/cfm-bot/discussions)
-- **Telegram**: [@CFmatch_bot](https://t.me/CFmatch_bot)
+MIT License - см. [LICENSE](LICENSE) файл
 
-## 🙏 Acknowledgments
+## 📞 Контакты
 
-- [Next.js](https://nextjs.org) - The React Framework
-- [Vercel](https://vercel.com) - Deployment Platform
-- [Telegram](https://telegram.org) - Messaging Platform
-- [PostgreSQL](https://postgresql.org) - Database
-- [Prisma](https://prisma.io) - ORM
+- Telegram Bot: [@CFmatch_bot](https://t.me/CFmatch_bot)
+- GitHub: [rivega42/cfm-bot](https://github.com/rivega42/cfm-bot)
 
 ---
 
-**Version**: 4.0.0-alpha  
-**Status**: Active Migration from n8n to Next.js  
-**Last Updated**: 2025-09-10  
-**Progress**: 35% Complete  
+<div align="center">
+  <strong>CFM Bot v4.0</strong> - Современная платформа для поиска со-основателей
+  <br>
+  Built with ❤️ using Next.js, TypeScript, and Telegram Mini Apps
+</div>
