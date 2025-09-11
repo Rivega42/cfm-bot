@@ -1,0 +1,255 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum UserRole {
+  USER
+  PREMIUM
+  ADMIN
+}
+
+enum MatchStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  MUTUAL
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+}
+
+enum QuestionCategory {
+  EXPERIENCE
+  SKILLS
+  VALUES
+  GOALS
+  WORK_STYLE
+  COMMITMENT
+  INDUSTRY
+  LOCATION
+}
+
+enum AnswerType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  SCALE
+  TEXT
+}
+
+// ==================== MODELS ====================
+
+model User {
+  id            String    @id @default(cuid())
+  telegramId    BigInt    @unique
+  username      String?
+  firstName     String
+  lastName      String?
+  photoUrl      String?
+  languageCode  String    @default("ru")
+  role          UserRole  @default(USER)
+  isBot         Boolean   @default(false)
+  isPremium     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastActiveAt  DateTime  @default(now())
+  deletedAt     DateTime?
+
+  // Relations
+  profile       UserProfile?
+  answers       Answer[]
+  sentMatches   Match[]       @relation("SentMatches")
+  receivedMatches Match[]     @relation("ReceivedMatches")
+  sentMessages  Message[]     @relation("SentMessages")
+  receivedMessages Message[]  @relation("ReceivedMessages")
+  sessions      Session[]
+  actions       UserAction[]
+  subscription  Subscription?
+
+  @@index([telegramId])
+  @@index([createdAt])
+  @@index([lastActiveAt])
+}
+
+model UserProfile {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  bio             String?
+  location        String?
+  timezone        String    @default("Europe/Moscow")
+  linkedin        String?
+  github          String?
+  website         String?
+  skills          String[]
+  industries      String[]
+  lookingFor      String[]
+  commitment      String?
+  experience      Int?      // Years of experience
+  profileComplete Boolean   @default(false)
+  isVisible       Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([profileComplete, isVisible])
+}
+
+model Question {
+  id           String           @id @default(cuid())
+  batchNumber  Int
+  orderInBatch Int
+  questionText String
+  questionKey  String           @unique
+  category     QuestionCategory
+  answerType   AnswerType
+  options      Json?            // Array of {value, text} for choices
+  weight       Float            @default(1.0)
+  isRequired   Boolean          @default(true)
+  isActive     Boolean          @default(true)
+  metadata     Json?            // Additional question metadata
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  // Relations
+  answers Answer[]
+
+  @@unique([batchNumber, orderInBatch])
+  @@index([batchNumber])
+  @@index([questionKey])
+  @@index([category])
+  @@index([isActive])
+}
+
+model Answer {
+  id           String   @id @default(cuid())
+  userId       String
+  questionId   String
+  phase        Int      // 1: personal, 2: importance, 3: expectations
+  value        Json     // Flexible storage for different answer types
+  importance   Int?     // 1-5 scale
+  expectation  Json?    // Expected answer from match
+  answeredAt   DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId, phase])
+  @@index([userId])
+  @@index([questionId])
+  @@index([answeredAt])
+}
+
+model Match {
+  id              String      @id @default(cuid())
+  fromUserId      String
+  toUserId        String
+  score           Float       // 0-100 compatibility score
+  status          MatchStatus @default(PENDING)
+  reasons         Json?       // Explanation of match reasons
+  sharedInterests String[]
+  mutualAt        DateTime?   // When both users liked each other
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  expiresAt       DateTime?   // For time-limited matches
+
+  // Relations
+  fromUser User @relation("SentMatches", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User @relation("ReceivedMatches", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@unique([fromUserId, toUserId])
+  @@index([fromUserId, status])
+  @@index([toUserId, status])
+  @@index([score])
+  @@index([mutualAt])
+  @@index([createdAt])
+}
+
+model Message {
+  id         String        @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  content    String
+  status     MessageStatus @default(SENT)
+  editedAt   DateTime?
+  deletedAt  DateTime?
+  createdAt  DateTime      @default(now())
+  readAt     DateTime?
+
+  // Relations
+  fromUser User @relation("SentMessages", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User @relation("ReceivedMessages", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@index([fromUserId, toUserId])
+  @@index([createdAt])
+  @@index([status])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  sessionToken String   @unique
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sessionToken])
+  @@index([expires])
+}
+
+model UserAction {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String   // e.g., "complete_batch", "send_match", "view_profile"
+  metadata   Json?    // Additional action data
+  createdAt  DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model Subscription {
+  id        String             @id @default(cuid())
+  userId    String             @unique
+  status    SubscriptionStatus @default(ACTIVE)
+  plan      String             // "monthly", "yearly", etc.
+  features  Json?              // Enabled premium features
+  startDate DateTime           @default(now())
+  endDate   DateTime
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([endDate])
+}
