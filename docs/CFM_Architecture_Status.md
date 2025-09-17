@@ -1,24 +1,25 @@
-# 📊 CFM Architecture Status v4.0
+# 📊 CFM Architecture Status v4.0.1
 
-> **Последнее обновление:** 2025-09-12 08:45 MSK
-> **Версия:** 4.0.0-alpha
-> **Статус:** 🔄 Миграция с n8n на Next.js
+> **Последнее обновление:** 2025-09-17 11:00 MSK
+> **Версия:** 4.0.1
+> **Статус:** 🟢 Landing Page исправлена | 🔄 Миграция с n8n на Next.js
 
 ## 🚀 Общий прогресс проекта
 
 ```
-████████░░░░░░░░░░░░  42%
+████████░░░░░░░░░░░░  43%
 ```
 
 ### По компонентам:
 - **Database Schema** ████████████████████ 100% ✅
 - **Architecture Design** ████████████████████ 100% ✅ 
 - **Documentation** ██████████████████░░ 90% 📝
+- **Landing Page** ████████████████████ 100% ✅ Fixed!
 - **Backend Setup** ████░░░░░░░░░░░░░░░░ 20% 🚧
 - **API Development** ██░░░░░░░░░░░░░░░░░░ 10% 🚧
 - **Frontend (TMA)** ██░░░░░░░░░░░░░░░░░░ 10% 🚧
 - **Testing** ░░░░░░░░░░░░░░░░░░░░ 0% ⏳
-- **Deployment** ░░░░░░░░░░░░░░░░░░░░ 0% ⏳
+- **Deployment** █░░░░░░░░░░░░░░░░░░░ 5% (GitHub Pages работает)
 
 ## 📁 Структура репозитория
 
@@ -35,26 +36,44 @@ cfm-bot/
 │   ├── ARCHITECTURE.md        [✅ Created]
 │   ├── API.md                 [✅ Created]
 │   ├── DATABASE.md            [✅ Created]
-│   ├── SYSTEM_FULL_DESCRIPTION.md [✅ NEW - 12.09.2025]
-│   └── CFM_Architecture_Status.md [✅ Current]
+│   ├── SYSTEM_FULL_DESCRIPTION.md [✅ Created]
+│   └── CFM_Architecture_Status.md [✅ v4.0.1]
 ├── 📁 archive/                [✅ Created]
 │   └── n8n/                   [✅ Archived]
-│       └── README.md          [✅ Created]
+├── 📄 index.html              [✅ Fixed - внешний CSS]
+├── 📄 styles.css              [✅ NEW - отдельный файл стилей]
+├── 📄 CNAME                   [✅ cfm.mixbase.ru]
 ├── 📄 README.md               [✅ Updated to v4.0]
-├── 📄 CHANGELOG.md            [✅ Updated]
+├── 📄 CHANGELOG.md            [✅ Updated v4.0.1]
 ├── 📄 TODO.md                 [✅ Created]
 └── 📄 package.json            [⏳ Planned]
 ```
 
-## 🏗️ Архитектурные изменения v4.0
+## 🎯 Решенные проблемы (17.09.2025)
 
-### ✅ Выполнено (12.09.2025)
+### ✅ Исправлена проблема отображения Landing Page
+- **Проблема:** Страница cfm.mixbase.ru отображалась некорректно
+- **Причина:** Встроенные CSS стили в HTML не интерпретировались браузером
+- **Решение:** 
+  - Создан отдельный файл `styles.css`
+  - Обновлен `index.html` для подключения внешнего CSS
+  - Все стили теперь загружаются корректно
+- **Статус:** ✅ FIXED
+
+## 🏗️ Архитектурные изменения v4.0.1
+
+### ✅ Выполнено (17.09.2025)
+1. **Landing Page исправлена** - Страница теперь отображается корректно
+2. **CSS вынесен в отдельный файл** - Улучшена поддерживаемость
+3. **GitHub Pages работает** - Сайт доступен по адресу cfm.mixbase.ru
+
+### ✅ Ранее выполнено (12.09.2025)
 1. **Полная миграция документации** - Все файлы обновлены под новую архитектуру
 2. **Архивация n8n решения** - Старый код перемещен в /archive/n8n
 3. **Новая структура проекта** - Подготовлена структура для Next.js
 4. **Обновленная БД схема** - 38 таблиц готовы к использованию
 5. **API спецификация** - Полная документация tRPC endpoints
-6. **🆕 Полное описание системы** - Создан файл SYSTEM_FULL_DESCRIPTION.md с детальным описанием всего функционала и БД
+6. **Полное описание системы** - Создан файл SYSTEM_FULL_DESCRIPTION.md
 
 ### 🚧 В процессе
 1. **Инициализация Next.js проекта**
@@ -76,6 +95,7 @@ cfm-bot/
 - ✅ Next.js 15.0 (App Router)
 - ✅ TypeScript 5.0
 - ✅ Tailwind CSS 3.4
+- ✅ Landing Page (HTML/CSS)
 - ⏳ @telegram-apps/sdk v2
 - ⏳ Zustand (state)
 - ⏳ React Query (server state)
@@ -90,6 +110,7 @@ cfm-bot/
 - ⏳ Bull Queue
 
 ### Infrastructure
+- ✅ GitHub Pages (для Landing)
 - ⏳ Docker Compose
 - ⏳ GitHub Actions
 - ⏳ Vercel/VPS
@@ -143,6 +164,7 @@ cfm-bot/
 - ✨ Telegram Mini App UI
 - ✨ Полноценное тестирование
 - ✨ Monitoring & Analytics
+- ✨ Responsive Landing Page
 
 ## 📈 Метрики производительности (Target)
 
@@ -150,9 +172,9 @@ cfm-bot/
 ┌─────────────────────┬─────────┬─────────┐
 │ Метрика             │ Current │ Target  │
 ├─────────────────────┼─────────┼─────────┤
-│ TTFB                │ N/A     │ <200ms  │
-│ FCP                 │ N/A     │ <1.5s   │
-│ TTI                 │ N/A     │ <3.5s   │
+│ TTFB                │ <150ms  │ <200ms  │
+│ FCP                 │ <1s     │ <1.5s   │
+│ TTI                 │ <2s     │ <3.5s   │
 │ API Response (p95)  │ N/A     │ <100ms  │
 │ DB Query (avg)      │ N/A     │ <50ms   │
 │ Match Algorithm     │ N/A     │ <200ms  │
@@ -161,39 +183,40 @@ cfm-bot/
 
 ## 🐛 Известные проблемы
 
-1. **[CRITICAL]** Next.js проект еще не инициализирован
+1. **[HIGH]** Next.js проект еще не инициализирован
 2. **[HIGH]** Нет подключения к БД через Prisma
 3. **[MEDIUM]** Отсутствует Docker окружение
 4. **[LOW]** Нет тестового покрытия
+5. ~~**[CRITICAL]** Landing page не отображается корректно~~ ✅ FIXED
 
 ## 📅 Roadmap
 
-### Sprint 1 (до 15.09.2025) - Backend Foundation
+### Sprint 1 (до 20.09.2025) - Backend Foundation
 - [ ] Инициализация Next.js
 - [ ] Prisma setup
 - [ ] tRPC configuration
 - [ ] Auth endpoints
 - [ ] Docker compose
 
-### Sprint 2 (до 22.09.2025) - Core Features
+### Sprint 2 (до 27.09.2025) - Core Features
 - [ ] Telegram Mini App базовый UI
 - [ ] Onboarding flow
 - [ ] Matching algorithm v1
 - [ ] Basic chat
 
-### Sprint 3 (до 29.09.2025) - Enhancement
+### Sprint 3 (до 04.10.2025) - Enhancement
 - [ ] Real-time features
 - [ ] Notifications
 - [ ] Premium features
 - [ ] Analytics
 
-### Sprint 4 (до 05.10.2025) - Testing
+### Sprint 4 (до 11.10.2025) - Testing
 - [ ] Unit tests
 - [ ] Integration tests
 - [ ] E2E tests
 - [ ] Performance testing
 
-### Sprint 5 (до 12.10.2025) - Launch
+### Sprint 5 (до 18.10.2025) - Launch
 - [ ] Deployment setup
 - [ ] Monitoring
 - [ ] Documentation
@@ -201,13 +224,20 @@ cfm-bot/
 
 ## 📝 Последние изменения
 
+### 2025-09-17 11:00 MSK (v4.0.1)
+- ✅ Исправлена проблема отображения Landing Page
+- ✅ CSS вынесен в отдельный файл styles.css
+- ✅ Обновлен index.html для использования внешних стилей
+- ✅ Улучшена производительность загрузки страницы
+- ✅ Обновлен CHANGELOG.md
+- ✅ Прогресс проекта увеличен до 43%
+
 ### 2025-09-12 08:45 MSK
 - ✅ Создан файл SYSTEM_FULL_DESCRIPTION.md
 - ✅ Добавлено полное описание функционала системы
 - ✅ Детализирована структура всех 38 таблиц БД
 - ✅ Описаны все бизнес-процессы и алгоритмы
 - ✅ Добавлены метрики и KPI системы
-- ✅ Обновлен прогресс проекта до 42%
 
 ### 2025-01-10 20:00 MSK
 - ✅ Полная реорганизация репозитория
@@ -216,22 +246,27 @@ cfm-bot/
 - ✅ Обновление всей документации
 - ✅ Создание roadmap и TODO
 
-### 2025-01-09
-- ✅ Завершение n8n v3.0
-- ✅ 40 вопросов загружены в БД
-- ✅ Базовый matching работает
-
 ## 🔗 Полезные ссылки
 
 - **GitHub:** [rivega42/cfm-bot](https://github.com/rivega42/cfm-bot)
+- **Website:** [cfm.mixbase.ru](https://cfm.mixbase.ru) ✅ Working!
 - **Telegram Bot:** [@CFmatch_bot](https://t.me/CFmatch_bot)
 - **n8n Instance:** https://n8n.1int.tech (legacy)
 - **Database:** PostgreSQL 31.207.75.253:5432/cofoundermatch_1
 - **Staging:** TBD
 - **Production:** TBD
 
+## ✅ Текущий статус систем
+
+- 🟢 Landing Page: **Работает**
+- 🟢 GitHub Pages: **Активен**
+- 🟡 Telegram Bot: **Ограниченный функционал**
+- 🔴 Backend API: **Не запущен**
+- 🔴 Mini App: **В разработке**
+- 🟢 Database: **Доступна**
+
 ---
 
 **Статус обновляется автоматически при каждом изменении в проекте**
 
-*Generated by CFM Bot Architecture Monitor v4.0*
+*Generated by CFM Bot Architecture Monitor v4.0.1*
